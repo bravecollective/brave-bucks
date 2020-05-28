@@ -108,10 +108,6 @@ public class WalletParser {
                             continue;
                         }
                         final double adm = admService.getAdm(systemId);
-                        // this will let the adm get up to 4 before skipping the system
-                        if (adm > 4.0) {
-                            continue;
-                        }
 
                         final String[] killSplit = walletEntry.getReason().split(",");
                         int killCount = 0;
