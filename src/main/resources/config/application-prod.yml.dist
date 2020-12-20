@@ -1,5 +1,5 @@
 # ===================================================================
-# Spring Boot configuration for the "dev" profile.
+# Spring Boot configuration for the "prod" profile.
 #
 # This configuration overrides the application.yml file.
 #
@@ -14,28 +14,25 @@
 # ===================================================================
 
 spring:
-    profiles:
-        active: dev
-        include: swagger
     devtools:
         restart:
-            enabled: true
+            enabled: false
         livereload:
-            enabled: false # we use gulp + BrowserSync for livereload
-    jackson:
-        serialization.indent_output: true
+            enabled: false
     data:
         mongodb:
-            uri: mongodb://admin:password@192.168.1.2:27017/brave-bucks?authSource=admin
-            database: brave-bucks
-    messages:
-        cache-seconds: 1
+            uri: mongodb://user:pass@cluster.mongodb.net:27017/eve-indy?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority
+            #host: host.mongodb.net
+            #port: 45178
+            database: bucks
+            #username: brave
+            #password: pass
     thymeleaf:
-        cache: false
+        cache: true
 
 # ===================================================================
 # To enable SSL, generate a certificate using:
-# keytool -genkey -alias braveBucks -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650
+# keytool -genkey -alias thebuyback -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650
 #
 # You can also use Let's Encrypt:
 # https://maximilian-boehm.com/hp2121/Create-a-Java-Keystore-JKS-from-Let-s-Encrypt-Certificates.htm
@@ -43,15 +40,25 @@ spring:
 # Then, modify the server.ssl properties so your "server" configuration looks like:
 #
 # server:
-#    port: 8443
+#    port: 443
 #    ssl:
 #        key-store: keystore.p12
 #        key-store-password: <your-password>
 #        keyStoreType: PKCS12
-#        keyAlias: braveBucks
+#        keyAlias: thebuyback
 # ===================================================================
 server:
-    port: 8080
+    port: 10443
+    address: 0.0.0.0
+    ssl:
+        key-store: bucks_keystore.p12
+        key-store-password: <your-password>
+        keyStoreType: PKCS12
+        keyAlias: bucks
+    compression:
+        enabled: true
+        mime-types: text/html,text/xml,text/plain,text/css, application/javascript, application/json
+        min-response-size: 1024
 
 # ===================================================================
 # JHipster specific properties
@@ -62,14 +69,8 @@ server:
 jhipster:
     http:
         version: V_1_1 # To use HTTP/2 you will need SSL support (see above the "server.ssl" configuration)
-    # CORS is only enabled by default with the "dev" profile, so BrowserSync can access the API
-    cors:
-        allowed-origins: "*"
-        allowed-methods: GET, PUT, POST, DELETE, OPTIONS
-        allowed-headers: "*"
-        exposed-headers:
-        allow-credentials: true
-        max-age: 1800
+        cache: # Used by the CachingHttpHeadersFilter
+            timeToLiveInDays: 1461
     security:
         authentication:
             jwt:
@@ -79,12 +80,12 @@ jhipster:
                 token-validity-in-seconds-for-remember-me: 2592000
     metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
         jmx.enabled: true
-        graphite: # Use the "graphite" Maven profile to have the Graphite dependencies
+        graphite:
             enabled: false
             host: localhost
-            port: 2003
-            prefix: braveBucks
-        prometheus: # Use the "prometheus" Maven profile to have the Prometheus dependencies
+            port: 2004
+            prefix: thebuyback
+        prometheus:
             enabled: false
             endpoint: /prometheusMetrics
         logs: # Reports Dropwizard metrics in the logs
@@ -94,7 +95,7 @@ jhipster:
         logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
             enabled: false
             host: localhost
-            port: 5000
+            port: 5001
             queue-size: 512
 
 # ===================================================================

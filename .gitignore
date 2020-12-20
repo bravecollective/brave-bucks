@@ -141,7 +141,19 @@ Desktop.ini
 ######################
 .eslintcache
 
+######################
+# Docker
+######################
+/src/main/docker/.maven-repo
+/src/main/docker/.mongo-db
+/src/main/docker/docker-compose.yml
+
+######################
+# app
+######################
 application-prod.yml
 deploy_rsa
 secrets.tar
 copyDB.sh
+/bucks_keystore.p12
+/notes.txt
