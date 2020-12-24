@@ -62,5 +62,5 @@ CLIENT_ID=*** \
 CLIENT_SECRET=*** \
 SSO_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Fbucks.bravecollective.com%2F%23%2Fcallback&client_id=***&scope=&state=uniquestate123' \
 java -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError \
--XX:HeapDumpPath=/home/bucks/dump.hprof -jar ./target/braveBucks-2.3.8.war &
+-XX:HeapDumpPath=/home/bucks/dump.hprof -jar ./target/braveBucks-2.3.9.war &
 ```
