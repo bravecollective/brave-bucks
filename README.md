@@ -11,14 +11,9 @@ ln -s dev.yml docker-compose.yml
 docker-compose up
 ```
 
-Import DB dump and add permissions - replace IP with your host IP:
+Import DB dump - replace IP with your host IP:
 ```
 mongorestore --uri mongodb://admin:password@192.168.1.2/brave-bucks ./dump-import-docker
-
-mongo "mongodb://admin:password@192.168.1.2/admin?authSource=admin"
-db.createRole({role : "readWriteSystem", privileges: [{resource: { db: "brave-bucks", collection: "system.indexes" }, actions: [ "changeStream", "collStats", "convertToCapped", "createCollection", "createIndex", "dbHash", "dbStats", "dropCollection", "dropIndex", "emptycapped", "find", "insert", "killCursors", "listCollections", "listIndexes", "planCacheRead", "remove", "renameCollectionSameDB", "update" ]}], roles:[]})
-db.grantRolesToUser('admin', ['readWriteSystem'])
-quit()
 ```
 
 Start/enter Docker Java container:
@@ -27,7 +22,7 @@ cd src/main/docker
 docker-compose run --service-ports brave-bucks-java /bin/bash
 ```
 
-Build app:
+Build frontend:
 ```
 ./mvnw install -Dmaven.test.skip=true
 ln -s /opt/brave-bucks/node/yarn/dist/bin/yarn /usr/local/bin/yarn
