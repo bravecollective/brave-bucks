@@ -10,9 +10,9 @@ import {SolarSystem} from "../../entities/solar-system/solar-system.model";
 })
 export class InfoBlockComponent implements OnInit {
 
-    systemsCatch: SolarSystem[];
-    systemsImpass: SolarSystem[];
-    systemsFeythabolis: SolarSystem[];
+    regions = ['Catch', 'Impass', 'Feythabolis', 'Querious'];
+    systems = {};
+
     walletUrl: string;
     characterNames: string[];
 
@@ -24,18 +24,11 @@ export class InfoBlockComponent implements OnInit {
             this.configService.getWalletUrl().subscribe((data) => this.walletUrl = data + "-" + account.id);
         });
 
-        this.http.get('/api/solar-systems/region/CATCH').subscribe((data) => {
-            this.systemsCatch = data.json();
-        });
-        this.http.get('/api/solar-systems/region/IMPASS').subscribe((data) => {
-            this.systemsImpass = data.json();
-        });
-        this.http.get('/api/solar-systems/region/FEYTHABOLIS').subscribe((data) => {
-            this.systemsFeythabolis = data.json();
-        });
-        this.http.get('/api/characters').subscribe((data) => {
-            this.characterNames = data.json();
-        });
+        for (let region of this.regions) {
+            this.http.get('/api/solar-systems/region/'+region.toUpperCase()).subscribe((data) => {
+                this.systems[region] = data.json();
+            });
+        }
     }
 
     revokeCharacter(characterName: string) {
@@ -48,20 +41,8 @@ export class InfoBlockComponent implements OnInit {
 
     getDotlanLink(region: string, isPvp: boolean, isRatting: boolean) {
         const systemNames = [];
-        if (region === 'Catch') {
-            this.systemsCatch.forEach((s) => {
-                if (isPvp && s.trackPvp || isRatting && s.trackRatting) {
-                    systemNames.push(s.systemName);
-                }
-            });
-        } else if (region === 'Feythabolis') {
-                this.systemsFeythabolis.forEach((s) => {
-                    if (isPvp && s.trackPvp || isRatting && s.trackRatting) {
-                        systemNames.push(s.systemName);
-                    }
-                });
-        } else {
-            this.systemsImpass.forEach((s) => {
+        if (this.systems.hasOwnProperty(region)) {
+            this.systems[region].forEach((s) => {
                 if (isPvp && s.trackPvp || isRatting && s.trackRatting) {
                     systemNames.push(s.systemName);
                 }
