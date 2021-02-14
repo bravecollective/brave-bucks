@@ -43,7 +43,6 @@ import io.github.jhipster.config.JHipsterConstants;
 @Service
 public class PayoutCalculator {
 
-    private static final long FINAL_BLOW_BONUS = 2;
     private static final long KILL_BUDGET = 9_000_000_000L;
     private static final long RATTING_BUDGET = 2_000_000_000L;
     private final KillmailRepository killmailRepository;
@@ -168,10 +167,6 @@ public class PayoutCalculator {
             for (final Integer attackerId : killmail.getAttackerIds()) {
                 if (Objects.equals(characterId, attackerId)) {
                     sum += points;
-                }
-
-                if (Objects.equals(characterId, killmail.getFinalBlowAttackerId())) {
-                    sum += FINAL_BLOW_BONUS;
                 }
             }
 
