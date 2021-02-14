@@ -98,11 +98,12 @@ public class KillmailPuller {
 
     private long getPoints(final long points, final int solarSystemId) {
         long preSquare = points;
-        final Double adm = admService.getAdm(solarSystemId);
-        final double factor = 6 - adm;
-        if (factor > 0) {
-            preSquare *= factor;
+        final double adm = admService.getAdm(solarSystemId);
+        double factor = 6 - adm;
+        if (factor < 0) { // factor should be min 0 (ADM should be max. 6)
+            factor = 0;
         }
+        preSquare *= factor;
         return (long) Math.sqrt(preSquare);
     }
 
