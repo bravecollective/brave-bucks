@@ -10,7 +10,7 @@ import {SolarSystem} from "../../entities/solar-system/solar-system.model";
 })
 export class InfoBlockComponent implements OnInit {
 
-    regions = ['Catch', 'Impass', 'Feythabolis', 'Querious'];
+    regions = ['Catch', 'Impass', 'Feythabolis', 'Querious', 'Delve'];
     systems = {};
 
     walletUrl: string;
