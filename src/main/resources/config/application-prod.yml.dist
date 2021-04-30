@@ -48,13 +48,14 @@ spring:
 #        keyAlias: thebuyback
 # ===================================================================
 server:
-    port: 10443
+    #port: 10443
+    port: 8080
     address: 0.0.0.0
-    ssl:
-        key-store: bucks_keystore.p12
-        key-store-password: <your-password>
-        keyStoreType: PKCS12
-        keyAlias: bucks
+    #ssl:
+    #    key-store: bucks_keystore.p12
+    #    key-store-password: <your-password>
+    #    keyStoreType: PKCS12
+    #    keyAlias: bucks
     compression:
         enabled: true
         mime-types: text/html,text/xml,text/plain,text/css, application/javascript, application/json

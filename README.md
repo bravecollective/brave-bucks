@@ -50,14 +50,21 @@ export WALLET_CLIENT_SECRET=***
 ./mvnw
 ```
 
-Create WAR file and run prod:
-- replace *** below
-- copy `src/main/resources/config/application-prod.yml.dist` to 
-`application-prod.yml` and adjust jhipster.security.authentication.jwt.secret and data.mongodb.* values in it
-- create bucks_keystore.p12 for the HTTPS certificate, see server.ssl in `application-prod.yml.dist`
+Build WAR file and Docker container:
+- copy `src/main/resources/config/application-prod.yml.dist` to `application-prod.yml` and 
+  adjust jhipster.security.authentication.jwt.secret and data.mongodb.* values in it
+- If you want use SSL for the web server: create the bucks_keystore.p12 file and activate the server.ssl configuration 
+  in `application-prod.yml`
 ```shell
+# run in the Docker Java dev container
 ./mvnw clean package -Pprod -DskipTests
 
+# run on your host
+docker build --no-cache --file src/main/docker/Dockerfile -t brave-bucks target
+```
+
+Run WAR file (prod) - replace *** and redirect_uri with your values
+```shell
 WALLET_CLIENT_ID=*** \
 WALLET_CLIENT_SECRET=*** \
 WALLET_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Fbucks.bravecollective.com%2F%23%2Fcallback&client_id=***&scope=esi-wallet.read_character_wallet.v1&state=wallet' \
@@ -66,4 +73,17 @@ CLIENT_SECRET=*** \
 SSO_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Fbucks.bravecollective.com%2F%23%2Fcallback&client_id=***&scope=&state=uniquestate123' \
 java -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError \
 -XX:HeapDumpPath=/home/bucks/dump.hprof -jar ./target/braveBucks-2.3.11.war &
+```
+
+Run Docker container - replace *** and redirect_uri with your values
+```shell
+docker run \
+  --env WALLET_CLIENT_ID=*** \
+  --env WALLET_CLIENT_SECRET=*** \
+  --env WALLET_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=https%3A%2F%2Fbucks.bravecollective.com%2F%23%2Fcallback&client_id=***&scope=esi-wallet.read_character_wallet.v1&state=wallet' \
+  --env CLIENT_ID=*** \
+  --env CLIENT_SECRET=*** \
+  --env SSO_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=https%3A%2F%2Fbucks.bravecollective.com%2F%23%2Fcallback&client_id=***&scope=&state=uniquestate123' \
+  --network host \
+  --rm brave-bucks
 ```
