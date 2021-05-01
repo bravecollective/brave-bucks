@@ -24,10 +24,6 @@ spring:
             enabled: false # we use gulp + BrowserSync for livereload
     jackson:
         serialization.indent_output: true
-    data:
-        mongodb:
-            uri: mongodb://admin:password@192.168.1.2:27017/brave-bucks?authSource=admin
-            database: brave-bucks
     messages:
         cache-seconds: 1
     thymeleaf:

@@ -34,6 +34,10 @@ spring:
     mvc:
         favicon:
             enabled: false
+    data:
+        mongodb:
+            uri: ${MONGO_URI}
+            database: ${MONGO_DB}
     thymeleaf:
         mode: XHTML
 

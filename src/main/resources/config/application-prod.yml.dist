@@ -21,10 +21,10 @@ spring:
             enabled: false
     data:
         mongodb:
-            uri: mongodb://user:pass@cluster.mongodb.net:27017/eve-indy?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority
+            #uri: mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority
             #host: host.mongodb.net
             #port: 45178
-            database: bucks
+            #database: bucks
             #username: brave
             #password: pass
     thymeleaf:
