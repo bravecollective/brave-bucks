@@ -4,19 +4,19 @@ Create EVE app for development:
 - Callback URL: http://localhost:8080/#/callback
 - Scopes: esi-wallet.read_character_wallet.v1
 
-Run Docker dev env:
+Run Docker development environment:
 ```shell
 cd src/main/docker
 ln -s dev.yml docker-compose.yml
 docker-compose up
 ```
 
-Import DB dump - replace IP with your host IP:
+Import DB dump - replace IP with your host IP, if necessary:
 ```shell
 mongorestore --uri mongodb://admin:password@172.17.0.1/brave-bucks ./dump
 ```
 
-Start/enter Docker Java container:
+Start and enter Docker Java container:
 ```shell
 cd src/main/docker
 docker-compose run --service-ports brave-bucks-java /bin/bash
@@ -33,12 +33,12 @@ yarn install
 yarn build
 ```
 
-Run frontend dev server:
+Run frontend development server:
 ```shell
 yarn start
 ```
 
-Run dev - replace *** and your Docker host IP for MongoDB, if necessary:
+Run backend in development mode - replace *** and your Docker host IP for MongoDB, if necessary:
 ```shell
 export SSO_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Flocalhost:8080%2F%23%2Fcallback&client_id=***&scope=&state=uniquestate123'
 export CLIENT_ID=***
@@ -48,15 +48,15 @@ export WALLET_CLIENT_ID=***
 export WALLET_CLIENT_SECRET=***
 export MONGO_URI=mongodb://admin:password@172.17.0.1:27017/brave-bucks?authSource=admin
 export MONGO_DB=brave-bucks
+export JWT_SECRET=my-secret-token-to-change-in-production
 
 ./mvnw
 ```
 
-Build WAR file and Docker container:
-- copy `src/main/resources/config/application-prod.yml.dist` to `application-prod.yml` and 
-  adjust jhipster.security.authentication.jwt.secret
-- If you want use SSL for the web server: create the bucks_keystore.p12 file and activate the server.ssl configuration 
-  in `application-prod.yml`
+Build WAR file and Docker container for production mode:
+- Copy `src/main/resources/config/application-prod.yml.dist` to `application-prod.yml`
+- If you want use SSL for the web server: create the bucks_keystore.p12 file, change the server.port and activate 
+  the server.ssl configuration in `application-prod.yml`
 ```shell
 # run in the Docker Java dev container
 ./mvnw clean package -Pprod -DskipTests
@@ -65,7 +65,7 @@ Build WAR file and Docker container:
 docker build --no-cache --file src/main/docker/Dockerfile -t brave-bucks target
 ```
 
-Run WAR file (prod) - replace *** and values for MONGO_URI, MONGO_DB and redirect_uri with your values:
+Run WAR file - replace *** and values for MONGO_URI, MONGO_DB, JWT_SECRET and redirect_uri with your values:
 ```shell
 WALLET_CLIENT_ID=*** \
 WALLET_CLIENT_SECRET=*** \
@@ -75,11 +75,12 @@ CLIENT_SECRET=*** \
 SSO_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Fbucks.bravecollective.com%2F%23%2Fcallback&client_id=***&scope=&state=uniquestate123' \
 MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority' \
 MONGO_DB=bucks \
+JWT_SECRET=my-secret-token-to-change-in-production \
 java -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError \
 -XX:HeapDumpPath=/home/bucks/dump.hprof -jar ./target/braveBucks-2.3.11.war &
 ```
 
-Run Docker container (prod) - replace *** and values for MONGO_URI, MONGO_DB and redirect_uri with your values:
+Run Docker container - replace *** and values for MONGO_URI, MONGO_DB, JWT_SECRET and redirect_uri with your values:
 ```shell
 docker run \
   --env WALLET_CLIENT_ID=*** \
@@ -90,6 +91,7 @@ docker run \
   --env SSO_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=https%3A%2F%2Fbucks.bravecollective.com%2F%23%2Fcallback&client_id=***&scope=&state=uniquestate123' \
   --env MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority' \
   --env MONGO_DB=bucks \
+  --env JWT_SECRET=my-secret-token-to-change-in-production \
   --network host \
   --rm brave-bucks
 ```
