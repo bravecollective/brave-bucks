@@ -95,3 +95,5 @@ docker run \
   --network host \
   --rm brave-bucks
 ```
+
+The Docker container is also available at https://hub.docker.com/r/bravecollective/brave-bucks.
