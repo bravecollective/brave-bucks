@@ -77,7 +77,7 @@ MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaS
 MONGO_DB=bucks \
 JWT_SECRET=my-secret-token-to-change-in-production \
 java -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError \
--XX:HeapDumpPath=/home/bucks/dump.hprof -jar ./target/braveBucks-2.3.11.war &
+-XX:HeapDumpPath=/home/bucks/dump.hprof -jar ./target/braveBucks-2.4.0.war &
 ```
 
 Run Docker container - replace *** and values for MONGO_URI, MONGO_DB, JWT_SECRET and redirect_uri with your values:
