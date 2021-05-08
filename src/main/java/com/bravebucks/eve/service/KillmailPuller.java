@@ -85,7 +85,7 @@ public class KillmailPuller {
                                                  .map(killmailParser::parseKillmail)
                                                  .filter(Objects::nonNull)
                                                  .filter(this::filterKillmail)
-                                                 .peek(kill -> kill.setPoints(getPoints(kill.getPoints(), kill.getSolarSystemId())))
+                                                 .peek(kill -> kill.setPoints(getPoints(kill.getPoints())))
                                                  .collect(toList());
 
         log.info("Saving {} new killmails.", killmails.size());
@@ -96,15 +96,9 @@ public class KillmailPuller {
         killmailRepository.save(killmails);
     }
 
-    private long getPoints(final long points, final int solarSystemId) {
-        long preSquare = points;
-        final double adm = admService.getAdm(solarSystemId);
-        double factor = 6 - adm;
-        if (factor < 0) { // factor should be min 0 (ADM should be max. 6)
-            factor = 0;
-        }
-        preSquare *= factor;
-        return (long) Math.sqrt(preSquare);
+    private long getPoints(final long points) {
+        //final double adm = admService.getAdm(solarSystemId);
+        return (long) Math.sqrt(points * 3);
     }
 
     private boolean filterKillmail(final Killmail killmail) {

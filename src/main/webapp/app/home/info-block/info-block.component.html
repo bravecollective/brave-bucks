@@ -72,21 +72,22 @@
             <ngb-tab title="Bucks Calculation">
                 <ng-template ngbTabContent>
                     <div class="content-box">
-                        Brave Bucks are based on a monthly budget Every day of the month
+                        Brave Bucks are based on a monthly budget. Every day of the month
                         gets the same share (e.g. 220mil). Every day during downtime we do two things: First
                         we take all the kills that were tracked and do some points calculation (see below) so that
                         every player ends up with a number of points for that day (may be 0 if you didn't get on any
-                        legitimate killmails, we will soon show the points for each killmail on the recent defense
-                        kills section). Secondly we spread the isk for that day over the points that were gathered that
+                        legitimate killmails.
+                        Secondly we spread the isk for that day over the points that were gathered that
                         day. So if one player got 60 points, and one other player 40, they will get 90 and 64 mil each.
                         That ISK is added to your bar during DT. Once you reach 100mil isk, you can request a payout.
                         <br/>
-                        Points calculation is super simple: <i>sqrt(zKillPoints * (6 - ADM))</i>
+                        Points calculation is super simple: <i>sqrt(zKillPoints * 3)</i>
                         <br/>
                         <ul>
                             <li>sqrt to keep the points balanced, many killmails only have one point, some have 50</li>
-                            <li>6 - ADM: systems with an ADM of 6 are not rewarded, from there the lower the better</li>
                         </ul>
+                        The payout for ADM Boosting is based on the ADM value of a system, the lower the better:
+                        <i>weight = 4 / (1 + ADM)</i>.
                     </div>
                 </ng-template>
             </ngb-tab>
