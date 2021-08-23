@@ -28,7 +28,7 @@
                             100mil ISK, you can request a payout.</p>
                         Maps (hunting systems are circled black):
                         <ul>
-                            <li *ngFor="let region of regions">
+                            <li *ngFor="let region of regionWithSystems('pvp')">
                                 <a target="_blank" rel="noopener noreferrer"
                                    href="{{getDotlanLink(region, true, false)}}">{{region}}</a>
                             </li>
@@ -49,7 +49,7 @@
                            that. The more rats you kill (in number of hulls, not ISK bounties), the better!</p>
                         Maps (target systems are circled black):
                         <ul>
-                            <li *ngFor="let region of regions">
+                            <li *ngFor="let region of regionWithSystems('adm')">
                                 <a target="_blank" rel="noopener noreferrer"
                                    href="{{getDotlanLink(region, false, true)}}">{{region}}</a>
                             </li>

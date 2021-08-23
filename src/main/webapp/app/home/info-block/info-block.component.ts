@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ConfigService, Principal} from "../../shared";
 import {Http} from "@angular/http";
-import {SolarSystem} from "../../entities/solar-system/solar-system.model";
+import {Region} from "../../entities/solar-system/solar-system.model";
 
 @Component({
   selector: 'jhi-info-block',
@@ -10,7 +10,7 @@ import {SolarSystem} from "../../entities/solar-system/solar-system.model";
 })
 export class InfoBlockComponent implements OnInit {
 
-    regions = ['Catch', 'Impass', 'Feythabolis', 'Querious', 'Delve'];
+    regions = Object.keys(Region).filter(k => typeof Region[k as any] === "number");
     systems = {};
 
     walletUrl: string;
@@ -26,7 +26,10 @@ export class InfoBlockComponent implements OnInit {
 
         for (let region of this.regions) {
             this.http.get('/api/solar-systems/region/'+region.toUpperCase()).subscribe((data) => {
-                this.systems[region] = data.json();
+                const systems = data.json();
+                if (systems.length > 0) {
+                    this.systems[region] = systems;
+                }
             });
         }
     }
@@ -36,6 +39,22 @@ export class InfoBlockComponent implements OnInit {
             this.http.get('/api/characters').subscribe((charNames) => {
                 this.characterNames = charNames.json();
             });
+        });
+    }
+
+    /**
+     * @param type "pvp" or "adm"
+     */
+    regionWithSystems(type: string) {
+        return Object.keys(this.systems).filter((key) => {
+            for (const system of this.systems[key]) {
+                if (type === 'pvp' && system.trackPvp) {
+                    return true;
+                } else if (type === 'adm' && system.trackRatting) {
+                    return true;
+                }
+            }
+            return false;
         });
     }
 

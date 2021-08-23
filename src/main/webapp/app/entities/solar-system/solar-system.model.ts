@@ -1,6 +1,6 @@
 import { BaseEntity } from './../../shared';
 
-const enum Region {
+export enum Region {
     'BRANCH',
     'CACHE',
     'CATCH',
