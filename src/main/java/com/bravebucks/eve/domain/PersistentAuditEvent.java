@@ -17,7 +17,9 @@ import java.util.Map;
 public class PersistentAuditEvent implements Serializable {
 
     @Id
-    @Field("event_id")
+    // Since spring-data-mongodb:2.2.x using a non-standard field name for ID in MongoDB schema does not work as expected.
+    // https://docs.spring.io/spring-data/mongodb/docs/2.1.5.RELEASE/reference/html/#mongo-template.id-handling
+    // Previously this field had @Field("event_id")
     private String id;
 
     @NotNull
