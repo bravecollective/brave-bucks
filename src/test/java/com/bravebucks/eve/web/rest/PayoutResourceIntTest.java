@@ -163,7 +163,7 @@ public class PayoutResourceIntTest {
         // Get all the payoutList
         restPayoutMockMvc.perform(get("/api/payouts?sort=id,desc"))
                          .andExpect(status().isOk())
-                         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                          .andExpect(jsonPath("$.[*].id").value(hasItem(payout.getId())))
                          .andExpect(jsonPath("$.[*].user").value(hasItem(DEFAULT_USER.toString())))
                          .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.doubleValue())))
@@ -182,7 +182,7 @@ public class PayoutResourceIntTest {
         // Get the payout
         restPayoutMockMvc.perform(get("/api/payouts/{id}", payout.getId()))
                          .andExpect(status().isOk())
-                         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                          .andExpect(jsonPath("$.id").value(payout.getId()))
                          .andExpect(jsonPath("$.user").value(DEFAULT_USER.toString()))
                          .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.doubleValue()))

@@ -135,7 +135,7 @@ public class SolarSystemResourceIntTest {
         // Get all the solarSystemList
         restSolarSystemMockMvc.perform(get("/api/solar-systems?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(solarSystem.getId())))
             .andExpect(jsonPath("$.[*].systemId").value(hasItem(DEFAULT_SYSTEM_ID.intValue())))
             .andExpect(jsonPath("$.[*].systemName").value(hasItem(DEFAULT_SYSTEM_NAME.toString())));
@@ -149,7 +149,7 @@ public class SolarSystemResourceIntTest {
         // Get the solarSystem
         restSolarSystemMockMvc.perform(get("/api/solar-systems/{id}", solarSystem.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(solarSystem.getId()))
             .andExpect(jsonPath("$.systemId").value(DEFAULT_SYSTEM_ID.intValue()))
             .andExpect(jsonPath("$.systemName").value(DEFAULT_SYSTEM_NAME.toString()));

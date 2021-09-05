@@ -162,7 +162,7 @@ public class TransactionResourceIntTest {
         // Get all the transactionList
         restTransactionMockMvc.perform(get("/api/transactions?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(transaction.getId())))
             .andExpect(jsonPath("$.[*].user").value(hasItem(DEFAULT_USER.toString())))
             .andExpect(jsonPath("$.[*].instant").value(hasItem(DEFAULT_INSTANT.toString())))
@@ -178,7 +178,7 @@ public class TransactionResourceIntTest {
         // Get the transaction
         restTransactionMockMvc.perform(get("/api/transactions/{id}", transaction.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(transaction.getId()))
             .andExpect(jsonPath("$.user").value(DEFAULT_USER.toString()))
             .andExpect(jsonPath("$.instant").value(DEFAULT_INSTANT.toString()))

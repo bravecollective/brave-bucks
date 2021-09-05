@@ -109,7 +109,7 @@ public class UserResourceIntTest {
         // Get all the users
         restUserMockMvc.perform(get("/api/users").accept(MediaType.APPLICATION_JSON))
                        .andExpect(status().isOk())
-                       .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                       .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                        .andExpect(jsonPath("$.[*].login").value(hasItem(DEFAULT_LOGIN)));
     }
 
@@ -121,7 +121,7 @@ public class UserResourceIntTest {
         // Get the user
         restUserMockMvc.perform(get("/api/users/{login}", user.getLogin()))
                        .andExpect(status().isOk())
-                       .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                       .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                        .andExpect(jsonPath("$.login").value(user.getLogin()));
 
     }
@@ -250,7 +250,7 @@ public class UserResourceIntTest {
             .accept(TestUtil.APPLICATION_JSON_UTF8)
             .contentType(TestUtil.APPLICATION_JSON_UTF8))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))    // This one still returns response a with ;charset=UTF-8
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").value(containsInAnyOrder("ROLE_USER", "ROLE_ADMIN", "ROLE_MANAGER")));
     }

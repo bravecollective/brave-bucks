@@ -137,7 +137,7 @@ public class DonationResourceIntTest {
         // Get all the donationList
         restDonationMockMvc.perform(get("/api/donations?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(donation.getId())))
             .andExpect(jsonPath("$.[*].donater").value(hasItem(DEFAULT_DONATER.toString())))
             .andExpect(jsonPath("$.[*].month").value(hasItem(DEFAULT_MONTH.toString())))
@@ -152,7 +152,7 @@ public class DonationResourceIntTest {
         // Get the donation
         restDonationMockMvc.perform(get("/api/donations/{id}", donation.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(donation.getId()))
             .andExpect(jsonPath("$.donater").value(DEFAULT_DONATER.toString()))
             .andExpect(jsonPath("$.month").value(DEFAULT_MONTH.toString()))

@@ -155,7 +155,7 @@ public class AdRequestResourceIntTest {
         // Get all the adRequestList
         restAdRequestMockMvc.perform(get("/api/ad-requests?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(adRequest.getId())))
             .andExpect(jsonPath("$.[*].requester").value(hasItem(DEFAULT_REQUESTER.toString())))
             .andExpect(jsonPath("$.[*].service").value(hasItem(DEFAULT_SERVICE.toString())))
@@ -173,7 +173,7 @@ public class AdRequestResourceIntTest {
         // Get the adRequest
         restAdRequestMockMvc.perform(get("/api/ad-requests/{id}", adRequest.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(adRequest.getId()))
             .andExpect(jsonPath("$.requester").value(DEFAULT_REQUESTER.toString()))
             .andExpect(jsonPath("$.service").value(DEFAULT_SERVICE.toString()))
