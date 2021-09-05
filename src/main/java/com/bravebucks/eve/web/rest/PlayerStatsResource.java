@@ -88,7 +88,7 @@ public class PlayerStatsResource {
         final MatchOperation filterByInstant = match(new Criteria("instant").gte(date));
         final MatchOperation filterByType = match(new Criteria("type").is(type.name()));
         final GroupOperation groupByStateAndSumPop = group("user").sum("amount").as("amount");
-        final SortOperation sortByPopDesc = sort(new Sort(Sort.Direction.DESC, "amount"));
+        final SortOperation sortByPopDesc = sort(Sort.by(Sort.Order.desc("amount")));
         final ProjectionOperation project = project().andExpression("_id").as("name")
                                                 .andExpression("amount").as("amount");
 
@@ -135,7 +135,7 @@ public class PlayerStatsResource {
         if (!oneByLogin.isPresent()) {
             return ResponseEntity.badRequest().body("Could not resolve user.");
         }
-        final PageRequest pageRequest = new PageRequest(0, 10, Sort.Direction.DESC, "killTime");
+        final PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "killTime");
         final List<KillmailDto> result = killmailRepository.findByAttackerId(oneByLogin.get().getCharacterId(), pageRequest)
                                                       .stream()
                                                       .map(PlayerStatsResource::createMailDto)
