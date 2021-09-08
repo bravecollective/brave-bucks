@@ -23,7 +23,7 @@
         <commons-lang.version>3.5</commons-lang.version>
         <docker-maven-plugin.version>0.4.13</docker-maven-plugin.version>
         <!-- Overridden to get metrics-jcache -->
-        <dropwizard-metrics.version>3.2.2</dropwizard-metrics.version>
+        <dropwizard-metrics.version>4.0.7</dropwizard-metrics.version>
         <frontend-maven-plugin.version>1.4</frontend-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <jakarta.xml.bind-api.version>2.3.3</jakarta.xml.bind-api.version><!-- since JRE11 need to supply 2.x version ourselves -->
@@ -113,6 +113,7 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
+            <version>${dropwizard-metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
@@ -131,12 +132,18 @@
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-jmx</artifactId>
+            <version>${dropwizard-metrics.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-servlet</artifactId>
             <version>${dropwizard-metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-servlets</artifactId>
+            <version>${dropwizard-metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>

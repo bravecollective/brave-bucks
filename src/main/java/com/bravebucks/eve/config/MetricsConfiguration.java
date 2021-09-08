@@ -2,8 +2,8 @@ package com.bravebucks.eve.config;
 
 import io.github.jhipster.config.JHipsterProperties;
 
-import com.codahale.metrics.JmxReporter;
-import com.codahale.metrics.JvmAttributeGaugeSet;
+import com.codahale.metrics.jmx.JmxReporter;
+import com.codahale.metrics.jvm.JvmAttributeGaugeSet;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
 import com.codahale.metrics.health.HealthCheckRegistry;
