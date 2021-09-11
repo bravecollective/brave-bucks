@@ -29,7 +29,7 @@
         <guava.version>20.0</guava.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <jakarta.xml.bind-api.version>2.3.3</jakarta.xml.bind-api.version><!-- since JRE11 need to supply 2.x version ourselves -->
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <jhipster.server.version>1.1.13</jhipster.server.version>
         <jjwt.version>0.7.0</jjwt.version>
         <logstash-logback-encoder.version>6.6</logstash-logback-encoder.version>
