@@ -11,9 +11,9 @@ import com.bravebucks.eve.service.TransactionService;
 import com.bravebucks.eve.web.rest.errors.ExceptionTranslator;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +21,7 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @see TransactionResource
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = BraveBucksApp.class)
 @ContextConfiguration(initializers = EnvironmentTestConfiguration.class)
 public class TransactionResourceIntTest {
@@ -79,7 +79,7 @@ public class TransactionResourceIntTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         final TransactionResource transactionResource = new TransactionResource(transactionService, userRepository);
@@ -108,7 +108,7 @@ public class TransactionResourceIntTest {
         return transaction;
     }
 
-    @Before
+    @BeforeEach
     public void initTest() {
         userRepository.deleteAll();
 

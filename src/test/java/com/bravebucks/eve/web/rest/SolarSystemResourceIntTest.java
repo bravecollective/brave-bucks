@@ -7,9 +7,9 @@ import com.bravebucks.eve.repository.SolarSystemRepository;
 import com.bravebucks.eve.service.JsonRequestService;
 import com.bravebucks.eve.web.rest.errors.ExceptionTranslator;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +17,7 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @see SolarSystemResource
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = BraveBucksApp.class)
 @ContextConfiguration(initializers = EnvironmentTestConfiguration.class)
 public class SolarSystemResourceIntTest {
@@ -61,7 +61,7 @@ public class SolarSystemResourceIntTest {
 
     private SolarSystem solarSystem;
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         final SolarSystemResource solarSystemResource = new SolarSystemResource(solarSystemRepository,
@@ -85,7 +85,7 @@ public class SolarSystemResourceIntTest {
         return solarSystem;
     }
 
-    @Before
+    @BeforeEach
     public void initTest() {
         solarSystemRepository.deleteAll();
         solarSystem = createEntity();

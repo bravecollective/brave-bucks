@@ -15,8 +15,8 @@ import com.bravebucks.eve.domain.Killmail;
 import com.bravebucks.eve.repository.KillmailRepository;
 import com.bravebucks.eve.repository.TransactionRepository;
 
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

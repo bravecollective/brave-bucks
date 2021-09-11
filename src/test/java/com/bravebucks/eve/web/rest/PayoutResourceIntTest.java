@@ -8,9 +8,9 @@ import com.bravebucks.eve.web.rest.errors.ExceptionTranslator;
 import com.bravebucks.eve.repository.PayoutRepository;
 import com.bravebucks.eve.repository.TransactionRepository;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +18,7 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -38,7 +38,7 @@ import com.bravebucks.eve.domain.enumeration.PayoutStatus;
  *
  * @see PayoutResource
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = BraveBucksApp.class)
 @ContextConfiguration(initializers = EnvironmentTestConfiguration.class)
 public class PayoutResourceIntTest {
@@ -83,7 +83,7 @@ public class PayoutResourceIntTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         final PayoutResource payoutResource = new PayoutResource(payoutRepository, transactionRepository,
@@ -111,7 +111,7 @@ public class PayoutResourceIntTest {
         return payout;
     }
 
-    @Before
+    @BeforeEach
     public void initTest() {
         payoutRepository.deleteAll();
         payout = createEntity();
