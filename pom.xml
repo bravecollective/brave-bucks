@@ -342,9 +342,11 @@
             <artifactId>logstash-logback-encoder</artifactId>
             <version>${logstash-logback-encoder.version}</version>
         </dependency>
+        <!-- spring-boot:2.3.x obsoletes this cloudfoundary is the forward path -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cloud-connectors</artifactId>
+            <version>2.2.13.RELEASE</version>
         </dependency>
         <!-- security -->
         <dependency>
