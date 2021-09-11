@@ -88,6 +88,8 @@ public class TransactionResourceIntTest {
             .setControllerAdvice(exceptionTranslator)
             .setMessageConverters(jacksonMessageConverter).build();
 
+        initTest();
+
         final User user = new User();
         user.setLogin(DEFAULT_USER);
         userRepository.save(user);
@@ -108,7 +110,6 @@ public class TransactionResourceIntTest {
         return transaction;
     }
 
-    @BeforeEach
     public void initTest() {
         userRepository.deleteAll();
 

@@ -10,6 +10,7 @@ import io.undertow.Undertow;
 import io.undertow.Undertow.Builder;
 import io.undertow.UndertowOptions;
 import org.apache.commons.io.FilenameUtils;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
@@ -122,7 +123,7 @@ public class WebConfigurerTest {
 
     @Test
     public void testCorsFilterOnApiPath() throws Exception {
-        props.getCors().setAllowedOrigins(Collections.singletonList("*"));
+        props.getCors().setAllowedOrigins(Collections.singletonList("other.domain.com"));
         props.getCors().setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         props.getCors().setAllowedHeaders(Collections.singletonList("*"));
         props.getCors().setMaxAge(1800L);
@@ -148,11 +149,20 @@ public class WebConfigurerTest {
                 .header(HttpHeaders.ORIGIN, "other.domain.com"))
             .andExpect(status().isOk())
             .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "other.domain.com"));
+
+        mockMvc.perform(
+                options("/api/test-cors")
+                    .header(HttpHeaders.ORIGIN, "notthis.domain.com")
+                    .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "POST"))
+            .andExpect(status().isForbidden())
+            .andExpect(header().string(HttpHeaders.VARY, "Origin"))
+            .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, Matchers.nullValue()))
+            .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, Matchers.nullValue()));
     }
 
     @Test
     public void testCorsFilterOnOtherPath() throws Exception {
-        props.getCors().setAllowedOrigins(Collections.singletonList("*"));
+        props.getCors().setAllowedOrigins(Collections.singletonList("other.domain.com"));
         props.getCors().setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         props.getCors().setAllowedHeaders(Collections.singletonList("*"));
         props.getCors().setMaxAge(1800L);
@@ -167,6 +177,16 @@ public class WebConfigurerTest {
                 .header(HttpHeaders.ORIGIN, "other.domain.com"))
             .andExpect(status().isOk())
             .andExpect(header().doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN));
+
+        mockMvc.perform(
+                options("/api/test-cors")
+                    .header(HttpHeaders.ORIGIN, "notthis.domain.com")
+                    .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "POST"))
+            .andExpect(status().isForbidden())
+            .andExpect(header().string(HttpHeaders.VARY, "Origin"))
+            .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, Matchers.nullValue()))
+            .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, Matchers.nullValue()));
+
     }
 
     @Test
