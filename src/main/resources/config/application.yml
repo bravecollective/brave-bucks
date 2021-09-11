@@ -43,7 +43,7 @@ spring:
             database: ${MONGO_DB}
             auto-index-creation: true
     thymeleaf:
-        mode: XHTML
+        mode: HTML
 
 security:
     basic:
