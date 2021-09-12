@@ -82,6 +82,15 @@ jhipster:
             enabled: true
             report-frequency: 60 # in seconds
 
+mongock:
+    change-logs-scan-package:
+        - com.bravebucks.eve.config.dbmigrations
+    mongo-db:
+        read-concern: local
+        write-concern:
+            journal: false
+#            w: majority
+
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

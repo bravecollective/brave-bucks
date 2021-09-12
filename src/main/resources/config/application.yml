@@ -100,6 +100,15 @@ jhipster:
     ribbon:
         display-on-active-profiles: dev
 
+mongock:
+    change-logs-scan-package:
+        - com.bravebucks.eve.config.dbmigrations
+    mongo-db:
+        read-concern: majority  # try 'local' if this doesn't work for you
+        write-concern:
+            journal: false
+#            w: majority
+
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

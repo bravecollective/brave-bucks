@@ -1,8 +1,9 @@
 package com.bravebucks.eve.config.dbmigrations;
 
-import com.github.mongobee.changeset.ChangeLog;
-import com.github.mongobee.changeset.ChangeSet;
 import com.bravebucks.eve.domain.PersistentAuditEvent;
+import com.github.cloudyrock.mongock.ChangeLog;
+import com.github.cloudyrock.mongock.ChangeSet;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 import com.mongodb.MongoNamespace;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -10,7 +11,6 @@ import org.bson.BsonDocument;
 import org.bson.BsonType;
 import org.bson.BsonValue;
 import org.bson.Document;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.ScriptOperations;
 import org.springframework.data.mongodb.core.script.ExecutableMongoScript;
@@ -34,13 +34,13 @@ public class CL004_MigratePersistentAuditEventID {
     @ChangeSet(order = "01",
                author = "troyburn",
                id = "004-01-migratePersistentAuditEventID")
-    public void renamePersistentAuditEventID(MongoTemplate mongoTemplate) {
+    public void renamePersistentAuditEventID(MongockTemplate mongockTemplate) {
         // Due to spring-data-mongodb 2.1.x changes
         // Because _id is special we need to potentially migrate
         // We are trying to rename event_id => _id (as the entity model for 'PersistentAuditEvent' looked and looks now)
         // The production system we have has not ever created this collection (hence this is migration strategy is untested)
 
-        boolean exists = mongoTemplate.collectionExists(TARGET_COLLECTION_NAME);
+        boolean exists = mongockTemplate.collectionExists(TARGET_COLLECTION_NAME);
         if(exists) {
             // This code is not tested well enough for such a critically named object
             //  this is why we throw an exception to prevent startup if we encounter
@@ -48,11 +48,11 @@ public class CL004_MigratePersistentAuditEventID {
 
             // Here is code that may help you test this migration, use at your own risk.
             //
-            // migrateTest(mongoTemplate);
+            // migrateTest(mongockTemplate);
 
             // Here is where the live migration is supposed to be:
             //
-            // doMigrate(mongoTemplate);
+            // doMigrate(mongockTemplate);
 
             // If you manage to test and fix this class please push you commit back upstream, thanks.
 
@@ -61,24 +61,24 @@ public class CL004_MigratePersistentAuditEventID {
 
     }
 
-    private void doMigrate(MongoTemplate mongoTemplate) {
+    private void doMigrate(MongockTemplate mongockTemplate) {
         // Rename existing data
-        mongoTemplate
+        mongockTemplate
             .getCollection(TARGET_COLLECTION_NAME)
             .renameCollection(new MongoNamespace(
-                mongoTemplate.getDb().getName(),
+                mongockTemplate.getDb().getName(),
                 BACKUP_COLLECTION_NAME
             ));
 
-        mongoTemplate.getDb().createCollection(TARGET_COLLECTION_NAME);
+        mongockTemplate.getDb().createCollection(TARGET_COLLECTION_NAME);
 
-        MongoCollection<Document> coll = mongoTemplate.getCollection(BACKUP_COLLECTION_NAME);
+        MongoCollection<Document> coll = mongockTemplate.getCollection(BACKUP_COLLECTION_NAME);
         for(Document dd : coll.find()) {
-            BsonDocument d = dd.toBsonDocument(PersistentAuditEvent.class, mongoTemplate.getDb().getCodecRegistry());
+            BsonDocument d = dd.toBsonDocument(PersistentAuditEvent.class, mongockTemplate.getDb().getCodecRegistry());
             BsonDocument newDoc = processOne(d);
-            mongoTemplate.save(newDoc, TARGET_COLLECTION_NAME);
+            mongockTemplate.save(newDoc, TARGET_COLLECTION_NAME);
             // Another thing you can do here is insert
-            // mongoTemplate.insert(newDoc, TARGET_COLLECTION_NAME);
+            // mongockTemplate.insert(newDoc, TARGET_COLLECTION_NAME);
         }
     }
 
@@ -118,8 +118,8 @@ public class CL004_MigratePersistentAuditEventID {
 
     /////////  ALTERNATIVE METHODS
 
-    private void scriptOpsMethod(MongoTemplate mongoTemplate) {
-        ScriptOperations scriptOps = mongoTemplate.scriptOps();
+    private void scriptOpsMethod(MongockTemplate mongockTemplate) {
+        ScriptOperations scriptOps = mongockTemplate.scriptOps();
 
         // FIXME this script does not work, it has no side effects,
         //  it is an example for MongoDB ninja's to create their own optimized migration script for bulk records
@@ -144,14 +144,14 @@ public class CL004_MigratePersistentAuditEventID {
 
     /////////  DIAGNOSTIC METHODS
 
-    private void dumpCollectionNames(MongoTemplate mongoTemplate) {
-        for(String col : mongoTemplate.getCollectionNames())
-            System.err.println("mongoTemplate#getCollectionNames:" + col);
-        dumpCollection(mongoTemplate, "mongockChangeLog", -1);
+    private void dumpCollectionNames(MongockTemplate mongockTemplate) {
+        for(String col : mongockTemplate.getCollectionNames())
+            System.err.println("mongockTemplate#getCollectionNames:" + col);
+        dumpCollection(mongockTemplate, "mongockChangeLog", -1);
     }
 
-    private void dumpCollection(MongoTemplate mongoTemplate, String collectionName, int maxCount) {
-        MongoCollection<Document> cldoc = mongoTemplate.getCollection(collectionName);
+    private void dumpCollection(MongockTemplate mongockTemplate, String collectionName, int maxCount) {
+        MongoCollection<Document> cldoc = mongockTemplate.getCollection(collectionName);
         if(cldoc == null)
             return;
         System.err.println(collectionName + ".count=" + cldoc.countDocuments());
@@ -174,16 +174,16 @@ public class CL004_MigratePersistentAuditEventID {
         return pae;
     }
 
-    private void setupTestSyntheticRecords(MongoTemplate mongoTemplate) {
-        boolean exists = mongoTemplate.collectionExists(TARGET_COLLECTION_NAME);
+    private void setupTestSyntheticRecords(MongockTemplate mongockTemplate) {
+        boolean exists = mongockTemplate.collectionExists(TARGET_COLLECTION_NAME);
         if(exists)
             throw new RuntimeException("setupTestSyntheticRecords: " + TARGET_COLLECTION_NAME);
 
-        exists = mongoTemplate.collectionExists(BACKUP_COLLECTION_NAME);
+        exists = mongockTemplate.collectionExists(BACKUP_COLLECTION_NAME);
         if(exists)
             throw new RuntimeException("setupTestSyntheticRecords: " + BACKUP_COLLECTION_NAME);
 
-        mongoTemplate.getDb().createCollection(TARGET_COLLECTION_NAME);
+        mongockTemplate.getDb().createCollection(TARGET_COLLECTION_NAME);
 
         for(int i = 0; i < 5; i++) {
             String ii = String.valueOf(i);
@@ -199,7 +199,7 @@ public class CL004_MigratePersistentAuditEventID {
             Map<String,String> data = (i != 2 && i != 3) ? dataMap : null;
 
             PersistentAuditEvent pae = buildPersistentAuditEvent(id, "004-01-MIGRATE-" + ii, Instant.now(), data);
-            mongoTemplate.save(pae);
+            mongockTemplate.save(pae);
 
             // Need to add eventId and both
         }
@@ -207,40 +207,40 @@ public class CL004_MigratePersistentAuditEventID {
         testSetupSuccessful = true;
     }
 
-    private void teardownTestSyntheticRecords(MongoTemplate mongoTemplate) {
+    private void teardownTestSyntheticRecords(MongockTemplate mongockTemplate) {
         if(testSetupSuccessful) {
-            mongoTemplate.dropCollection(TARGET_COLLECTION_NAME);
-            mongoTemplate.dropCollection(BACKUP_COLLECTION_NAME);
+            mongockTemplate.dropCollection(TARGET_COLLECTION_NAME);
+            mongockTemplate.dropCollection(BACKUP_COLLECTION_NAME);
         }
     }
 
-    private void migrateTest(MongoTemplate mongoTemplate) {
-        boolean exists = mongoTemplate.collectionExists(TARGET_COLLECTION_NAME);
-        System.err.println("mongoTemplate#collectionExists(\"" + TARGET_COLLECTION_NAME + "\"):" + exists);
+    private void migrateTest(MongockTemplate mongockTemplate) {
+        boolean exists = mongockTemplate.collectionExists(TARGET_COLLECTION_NAME);
+        System.err.println("mongockTemplate#collectionExists(\"" + TARGET_COLLECTION_NAME + "\"):" + exists);
 
         if(exists) {
             // Looks like a LIVE system
-            doMigrate(mongoTemplate); // LIVE
+            doMigrate(mongockTemplate); // LIVE
         } else {
             // Okay we setup test records and perform test migration on those records
             //  this can help you simulate your system in code and verify output
-            setupTestSyntheticRecords(mongoTemplate);
+            setupTestSyntheticRecords(mongockTemplate);
 
-            dumpCollection(mongoTemplate, TARGET_COLLECTION_NAME, MAX_COUNT);
-            dumpCollection(mongoTemplate, BACKUP_COLLECTION_NAME, MAX_COUNT);
+            dumpCollection(mongockTemplate, TARGET_COLLECTION_NAME, MAX_COUNT);
+            dumpCollection(mongockTemplate, BACKUP_COLLECTION_NAME, MAX_COUNT);
 
-            scriptOpsMethod(mongoTemplate);       // NOOP
+            scriptOpsMethod(mongockTemplate);       // NOOP
 
-            doMigrate(mongoTemplate); // on TEST data
+            doMigrate(mongockTemplate); // on TEST data
 
-            dumpCollection(mongoTemplate, TARGET_COLLECTION_NAME, MAX_COUNT);
-            dumpCollection(mongoTemplate, BACKUP_COLLECTION_NAME, MAX_COUNT);
+            dumpCollection(mongockTemplate, TARGET_COLLECTION_NAME, MAX_COUNT);
+            dumpCollection(mongockTemplate, BACKUP_COLLECTION_NAME, MAX_COUNT);
 
-            teardownTestSyntheticRecords(mongoTemplate);
+            teardownTestSyntheticRecords(mongockTemplate);
         }
 
-        dumpCollection(mongoTemplate, TARGET_COLLECTION_NAME, MAX_COUNT);
-        dumpCollection(mongoTemplate, BACKUP_COLLECTION_NAME, MAX_COUNT);
+        dumpCollection(mongockTemplate, TARGET_COLLECTION_NAME, MAX_COUNT);
+        dumpCollection(mongockTemplate, BACKUP_COLLECTION_NAME, MAX_COUNT);
     }
 
 }

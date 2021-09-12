@@ -1,12 +1,11 @@
 package com.bravebucks.eve.config.dbmigrations;
 
 import com.bravebucks.eve.domain.EveCharacter;
-import com.bravebucks.eve.domain.SolarSystem;
 import com.bravebucks.eve.domain.User;
-import com.github.mongobee.changeset.ChangeLog;
-import com.github.mongobee.changeset.ChangeSet;
+import com.github.cloudyrock.mongock.ChangeLog;
+import com.github.cloudyrock.mongock.ChangeSet;
 
-import org.springframework.data.mongodb.core.MongoTemplate;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 
 /**
  * Creates the initial database setup
@@ -17,8 +16,8 @@ public class MigrateWalletReadTokens {
     @ChangeSet(order = "01",
                author = "rihan",
                id = "01-migrateWalletReadTokens")
-    public void addAuthorities(MongoTemplate mongoTemplate) {
-        mongoTemplate.findAll(User.class).stream()
+    public void addAuthorities(MongockTemplate mongockTemplate) {
+        mongockTemplate.findAll(User.class).stream()
                      .filter(u -> u.getWalletReadRefreshTokens() != null)
                      .forEach(user -> {
                          user.getWalletReadRefreshTokens().forEach((characterId, refreshToken) -> {
@@ -26,10 +25,10 @@ public class MigrateWalletReadTokens {
                              character.setId(characterId);
                              character.setOwningUser(user.getId());
                              character.setWalletReadRefreshToken(refreshToken);
-                             mongoTemplate.save(character);
+                             mongockTemplate.save(character);
                          });
                          user.setWalletReadRefreshTokens(null);
-                         mongoTemplate.save(user);
+                         mongockTemplate.save(user);
                      });
     }
 }
