@@ -104,7 +104,7 @@ public class UserJWTController {
             final EveCharacter character = new EveCharacter(charDetails.getCharacterId(), charDetails.getCharacterName(),
                                                     authResponse.getRefreshToken(), targetUserId);
             characterRepository.save(character);
-            user = userRepository.findOne(targetUserId);
+            user = userRepository.findById(targetUserId).orElse(null);
         } else {
             final AuthVerificationResponse authResponse = verifyAuthentication(code, state, clientId, clientSecret);
             final CharacterDetailsResponse charDetails = getCharacterDetails(authResponse.getAccessToken());

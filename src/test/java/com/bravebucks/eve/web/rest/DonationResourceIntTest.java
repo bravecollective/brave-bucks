@@ -173,7 +173,7 @@ public class DonationResourceIntTest {
         int databaseSizeBeforeUpdate = donationRepository.findAll().size();
 
         // Update the donation
-        Donation updatedDonation = donationRepository.findOne(donation.getId());
+        Donation updatedDonation = donationRepository.findById(donation.getId()).orElse(null);
         updatedDonation
             .donater(UPDATED_DONATER)
             .month(UPDATED_MONTH)

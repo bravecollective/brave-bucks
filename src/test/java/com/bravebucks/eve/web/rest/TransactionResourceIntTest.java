@@ -199,7 +199,7 @@ public class TransactionResourceIntTest {
         int databaseSizeBeforeUpdate = transactionRepository.findAll().size();
 
         // Update the transaction
-        Transaction updatedTransaction = transactionRepository.findOne(transaction.getId());
+        Transaction updatedTransaction = transactionRepository.findById(transaction.getId()).orElse(null);
         updatedTransaction
             .user(UPDATED_USER)
             .instant(UPDATED_INSTANT)

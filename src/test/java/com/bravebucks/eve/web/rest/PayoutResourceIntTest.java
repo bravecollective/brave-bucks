@@ -206,7 +206,7 @@ public class PayoutResourceIntTest {
         int databaseSizeBeforeUpdate = payoutRepository.findAll().size();
 
         // Update the payout
-        Payout updatedPayout = payoutRepository.findOne(payout.getId());
+        Payout updatedPayout = payoutRepository.findById(payout.getId()).orElse(null);
         updatedPayout
             .user(UPDATED_USER)
             .amount(UPDATED_AMOUNT)
@@ -236,7 +236,7 @@ public class PayoutResourceIntTest {
         int databaseSizeBeforeUpdate = payoutRepository.findAll().size();
 
         // Update the payout
-        Payout updatedPayout = payoutRepository.findOne(aPayout.getId());
+        Payout updatedPayout = payoutRepository.findById(aPayout.getId()).orElse(null);
         updatedPayout.status(PayoutStatus.CANCELLED);
 
         restPayoutMockMvc.perform(put("/api/payouts")

@@ -52,6 +52,6 @@ public class TransactionService {
      */
     public Transaction findOne(String id) {
         log.debug("Request to get Transaction : {}", id);
-        return transactionRepository.findOne(id);
+        return transactionRepository.findById(id).orElse(null);
     }
 }

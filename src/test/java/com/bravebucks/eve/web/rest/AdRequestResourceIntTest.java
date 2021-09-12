@@ -197,7 +197,7 @@ public class AdRequestResourceIntTest {
         int databaseSizeBeforeUpdate = adRequestRepository.findAll().size();
 
         // Update the adRequest
-        AdRequest updatedAdRequest = adRequestRepository.findOne(adRequest.getId());
+        AdRequest updatedAdRequest = adRequestRepository.findById(adRequest.getId()).orElse(null);
         updatedAdRequest
             .requester(UPDATED_REQUESTER)
             .service(UPDATED_SERVICE)
