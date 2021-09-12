@@ -110,6 +110,8 @@ public class TransactionResourceIntTest {
 
     @Before
     public void initTest() {
+        userRepository.deleteAll();
+
         transactionRepository.deleteAll();
         transaction = createEntity();
     }
