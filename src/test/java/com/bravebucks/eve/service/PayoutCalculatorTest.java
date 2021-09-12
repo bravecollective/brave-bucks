@@ -44,7 +44,7 @@ public class PayoutCalculatorTest {
         pendingKillmail.setPoints(1L);
         pendingKillmail.setAttackerIds(Collections.singletonList(user.getCharacterId().intValue()));
         when(killmailRepo.findPending()).thenReturn(Collections.singletonList(pendingKillmail));
-        when(transactionRepo.save(anyList())).thenReturn(null);
+        when(transactionRepo.saveAll(anyList())).thenReturn(null);
         when(killmailRepo.save(any(Killmail.class))).thenReturn(null);
         LocalDate now = LocalDate.now();
         final Donation donation = new Donation();
@@ -54,8 +54,8 @@ public class PayoutCalculatorTest {
 
         sut.calculatePayouts();
 
-        verify(killmailRepo).save(anyList());
-        verify(transactionRepo).save(anyList());
+        verify(killmailRepo).saveAll(anyList());
+        verify(transactionRepo).saveAll(anyList());
     }
 
     @Test
