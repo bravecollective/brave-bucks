@@ -21,6 +21,9 @@ management:
     health:
         mail:
             enabled: false # When using the MailService, configure an SMTP server and set this to true
+    endpoint:
+        metrics:
+            enabled: true # Check this replaces MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class
 spring:
     application:
         name: braveBucks
