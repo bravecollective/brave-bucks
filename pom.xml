@@ -26,6 +26,7 @@
         <dropwizard-metrics.version>3.2.2</dropwizard-metrics.version>
         <frontend-maven-plugin.version>1.4</frontend-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+        <jakarta.xml.bind-api.version>2.3.3</jakarta.xml.bind-api.version><!-- since JRE11 need to supply 2.x version ourselves -->
         <java.version>1.8</java.version>
         <jhipster.server.version>1.1.9</jhipster.server.version>
         <jjwt.version>0.7.0</jjwt.version>
@@ -136,6 +137,11 @@
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-servlets</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta.xml.bind-api.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
