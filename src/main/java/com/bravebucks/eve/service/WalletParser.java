@@ -170,7 +170,7 @@ public class WalletParser {
 
         final HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
-        return restTemplate.postForEntity("https://login.eveonline.com/oauth/token", request,
+        return restTemplate.postForEntity("https://login.eveonline.com/v2/oauth/token", request,
                                           AccessTokenResponse.class).getBody().getAccessToken();
     }
 

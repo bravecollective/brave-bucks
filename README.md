@@ -1,7 +1,19 @@
 [![codecov](https://codecov.io/gh/bahrmichael/brave-bucks/branch/master/graph/badge.svg)](https://codecov.io/gh/bahrmichael/brave-bucks)
 
+### Changelog
+
+#### next
+
+Switched to EVE SSOv2
+
+- **Breaking Change**: The callback URL changed to `http://your.domain.tld/api/callback`
+- **Breaking Change**: The OAuth login URL in the environment variables SSO_URL and WALLET_URL changed to
+  `https://login.eveonline.com/v2/oauth/authorize/`
+
+### Setup
+
 Create EVE app for development:
-- Callback URL: http://localhost:8080/#/callback
+- Callback URL: http://localhost:8080/api/callback
 - Scopes: esi-wallet.read_character_wallet.v1
 
 Run Docker development environment:
@@ -40,10 +52,10 @@ yarn start
 
 Run backend in development mode - replace *** and your Docker host IP for MongoDB, if necessary:
 ```shell
-export SSO_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Flocalhost:8080%2F%23%2Fcallback&client_id=***&scope=&state=uniquestate123'
+export SSO_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Flocalhost:8080%2Fapi%2Fcallback&client_id=***&scope=&state=uniquestate123'
 export CLIENT_ID=***
 export CLIENT_SECRET=***
-export WALLET_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Flocalhost:8080%2F%23%2Fcallback&client_id=***&scope=esi-wallet.read_character_wallet.v1&state=wallet'
+export WALLET_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Flocalhost:8080%2Fapi%2Fcallback&client_id=***&scope=esi-wallet.read_character_wallet.v1&state=wallet'
 export WALLET_CLIENT_ID=***
 export WALLET_CLIENT_SECRET=***
 export MONGO_URI=mongodb://admin:password@172.17.0.1:27017/brave-bucks?authSource=admin
@@ -69,10 +81,10 @@ Run WAR file - replace *** and values for MONGO_URI, MONGO_DB, JWT_SECRET and re
 ```shell
 WALLET_CLIENT_ID=*** \
 WALLET_CLIENT_SECRET=*** \
-WALLET_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Fbucks.bravecollective.com%2F%23%2Fcallback&client_id=***&scope=esi-wallet.read_character_wallet.v1&state=wallet' \
+WALLET_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Fbucks.bravecollective.com%2Fapi%2Fcallback&client_id=***&scope=esi-wallet.read_character_wallet.v1&state=wallet' \
 CLIENT_ID=*** \
 CLIENT_SECRET=*** \
-SSO_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Fbucks.bravecollective.com%2F%23%2Fcallback&client_id=***&scope=&state=uniquestate123' \
+SSO_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Fbucks.bravecollective.com%2Fapi%2Fcallback&client_id=***&scope=&state=uniquestate123' \
 MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority' \
 MONGO_DB=bucks \
 JWT_SECRET=my-secret-token-to-change-in-production \
@@ -85,10 +97,10 @@ Run Docker container - replace *** and values for MONGO_URI, MONGO_DB, JWT_SECRE
 docker run \
   --env WALLET_CLIENT_ID=*** \
   --env WALLET_CLIENT_SECRET=*** \
-  --env WALLET_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=https%3A%2F%2Fbucks.bravecollective.com%2F%23%2Fcallback&client_id=***&scope=esi-wallet.read_character_wallet.v1&state=wallet' \
+  --env WALLET_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=https%3A%2F%2Fbucks.bravecollective.com%2Fapi%2Fcallback&client_id=***&scope=esi-wallet.read_character_wallet.v1&state=wallet' \
   --env CLIENT_ID=*** \
   --env CLIENT_SECRET=*** \
-  --env SSO_URL='https://login.eveonline.com/oauth/authorize/?response_type=code&redirect_uri=https%3A%2F%2Fbucks.bravecollective.com%2F%23%2Fcallback&client_id=***&scope=&state=uniquestate123' \
+  --env SSO_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=https%3A%2F%2Fbucks.bravecollective.com%2Fapi%2Fcallback&client_id=***&scope=&state=uniquestate123' \
   --env MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority' \
   --env MONGO_DB=bucks \
   --env JWT_SECRET=my-secret-token-to-change-in-production \

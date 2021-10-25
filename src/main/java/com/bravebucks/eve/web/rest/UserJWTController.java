@@ -1,5 +1,6 @@
 package com.bravebucks.eve.web.rest;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
@@ -84,6 +85,11 @@ public class UserJWTController {
         this.allianceParser = allianceParser;
     }
 
+    @GetMapping("/callback")
+    public void callback(@RequestParam("code") String code, @RequestParam("state") String state, HttpServletResponse response) throws IOException {
+        response.sendRedirect("/#/callback?code=" + code + "&state=" + state);
+    }
+
     @GetMapping("/authenticate/sso")
     @Timed
     public ResponseEntity authorize(@RequestParam("code") String code, @RequestParam("state") String state, HttpServletResponse response) {
@@ -148,7 +154,7 @@ public class UserJWTController {
         map.add("code", code);
 
         final HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        return restTemplate.postForObject("https://login.eveonline.com/oauth/token", request, AuthVerificationResponse.class);
+        return restTemplate.postForObject("https://login.eveonline.com/v2/oauth/token", request, AuthVerificationResponse.class);
     }
 
     public static String getBasicAuth(final String clientId, final String clientSecret) {
