@@ -39,7 +39,7 @@ public class AllianceParser {
     }
 
     public void updateAllianceForUser(final User user) {
-        final String uri = "https://esi.evetech.net/v4/characters/" + user.getCharacterId() + "/";
+        final String uri = "https://esi.evetech.net/v5/characters/" + user.getCharacterId() + "/";
         try {
             final CharacterInfoResponse characterInfo = restTemplate.getForObject(uri, CharacterInfoResponse.class,
                                                                                   new HashMap<>());
