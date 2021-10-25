@@ -1,10 +1,7 @@
 package com.bravebucks.eve.service;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.bravebucks.eve.DelayService;
@@ -78,7 +75,6 @@ public class WalletParser {
         final List<EveCharacter> characters = characterRepository.findByWalletReadRefreshTokenNotNull();
 
         for (EveCharacter character : characters) {
-            final String refreshToken = character.getWalletReadRefreshToken();
             final int characterId = character.getId();
 
             if (delayService.shouldIChill()) {
@@ -88,7 +84,7 @@ public class WalletParser {
             try {
 
                 final String eTag = character.getWalletJournalEtag();
-                final ResponseEntity<WalletResponse[]> walletResponse = getWalletResponse(refreshToken, characterId, eTag);
+                final ResponseEntity<WalletResponse[]> walletResponse = getWalletResponse(character, eTag);
 
                 if (walletResponse.getStatusCode() != HttpStatus.OK || walletResponse.getBody() == null) {
                     log.info("No new transactions for {} (wallet response is {}).", characterId,
@@ -139,12 +135,15 @@ public class WalletParser {
         log.info("Collecting transactions took {} seconds.", (end - start) / 1000);
     }
 
-    private ResponseEntity<WalletResponse[]> getWalletResponse(final String refreshToken, final int characterId,
+    private ResponseEntity<WalletResponse[]> getWalletResponse(final EveCharacter character,
                                                                final String eTag) {
-        final String accessToken = getAccessTokenWithRefreshToken(refreshToken, walletClientId, walletClientSecret);
-        final String walletUri = "https://esi.evetech.net/v6/characters/" + characterId + "/wallet/journal/";
+        final String refreshToken = character.getWalletReadRefreshToken();
+        final AccessTokenResponse token = getAccessTokenWithRefreshToken(refreshToken, walletClientId, walletClientSecret);
+        updateRefreshToken(character, token);
 
-        return restTemplate.exchange(walletUri, HttpMethod.GET, authorizedRequest(accessToken,
+        final String walletUri = "https://esi.evetech.net/v6/characters/" + character.getId() + "/wallet/journal/";
+
+        return restTemplate.exchange(walletUri, HttpMethod.GET, authorizedRequest(token.getAccessToken(),
                                                                                   eTag), WalletResponse[].class);
     }
 
@@ -157,7 +156,15 @@ public class WalletParser {
         }
     }
 
-    private String getAccessTokenWithRefreshToken(final String refreshToken, final String clientId,
+    private void updateRefreshToken(final EveCharacter character, final AccessTokenResponse token) {
+        final String refreshToken = token.getRefreshToken();
+        if (!Objects.equals(character.getWalletReadRefreshToken(), refreshToken)) {
+            character.setWalletReadRefreshToken(refreshToken);
+            characterRepository.save(character);
+        }
+    }
+
+    private AccessTokenResponse getAccessTokenWithRefreshToken(final String refreshToken, final String clientId,
                                                   final String clientSecret) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -171,7 +178,7 @@ public class WalletParser {
         final HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
         return restTemplate.postForEntity("https://login.eveonline.com/v2/oauth/token", request,
-                                          AccessTokenResponse.class).getBody().getAccessToken();
+            AccessTokenResponse.class).getBody();
     }
 
     private static HttpEntity<Object> authorizedRequest(final String accessToken, final String etag) {

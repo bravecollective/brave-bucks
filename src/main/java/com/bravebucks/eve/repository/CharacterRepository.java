@@ -15,5 +15,7 @@ public interface CharacterRepository extends MongoRepository<EveCharacter, Strin
 
     Optional<EveCharacter> findByNameAndOwningUser(final String characterName, final String id);
 
+    Optional<EveCharacter> findById(final int id);
+
     List<EveCharacter> findByWalletReadRefreshTokenNotNull();
 }
