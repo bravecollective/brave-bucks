@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import static com.bravebucks.eve.security.jwt.JWTConfigurer.AUTHORIZATION_HEADER;
 
 import org.apache.commons.codec.binary.Base64;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -136,11 +137,17 @@ public class UserJWTController {
     }
 
     private CharacterDetailsResponse getCharacterDetails(final String accessToken) {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(AUTHORIZATION_HEADER, "Bearer " + accessToken);
+        String[] chunks = accessToken.split("\\.");
+        java.util.Base64.Decoder decoder = java.util.Base64.getDecoder();
+        String payload = new String(decoder.decode(chunks[1]));
+        JSONObject jsonObject = new JSONObject(payload);
+        String sub = jsonObject.getString("sub");
 
-        final HttpEntity<Void> request = new HttpEntity<>(null, headers);
-        return restTemplate.exchange("https://login.eveonline.com/oauth/verify", HttpMethod.GET, request, CharacterDetailsResponse.class).getBody();
+        CharacterDetailsResponse detail = new CharacterDetailsResponse();
+        detail.setCharacterId(Integer.parseInt(sub.replace("CHARACTER:EVE:", "")));
+        detail.setCharacterName(jsonObject.getString("name"));
+
+        return detail;
     }
 
     private AuthVerificationResponse verifyAuthentication(final String code, final String state, final String clientId, final String clientSecret) {
