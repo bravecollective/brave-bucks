@@ -137,8 +137,7 @@ public class WalletParser {
 
     private ResponseEntity<WalletResponse[]> getWalletResponse(final EveCharacter character,
                                                                final String eTag) {
-        final String refreshToken = character.getWalletReadRefreshToken();
-        final AccessTokenResponse token = getAccessTokenWithRefreshToken(refreshToken, walletClientId, walletClientSecret);
+        final AccessTokenResponse token = getAccessTokenWithRefreshToken(character, walletClientId, walletClientSecret);
         updateRefreshToken(character, token);
 
         final String walletUri = "https://esi.evetech.net/v6/characters/" + character.getId() + "/wallet/journal/";
@@ -164,8 +163,9 @@ public class WalletParser {
         }
     }
 
-    private AccessTokenResponse getAccessTokenWithRefreshToken(final String refreshToken, final String clientId,
+    private AccessTokenResponse getAccessTokenWithRefreshToken(final EveCharacter character, final String clientId,
                                                   final String clientSecret) {
+        final String refreshToken = character.getWalletReadRefreshToken();
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -177,8 +177,26 @@ public class WalletParser {
 
         final HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
-        return restTemplate.postForEntity("https://login.eveonline.com/v2/oauth/token", request,
-            AccessTokenResponse.class).getBody();
+        ResponseEntity<AccessTokenResponse> response;
+        try {
+            response = restTemplate.postForEntity(
+                "https://login.eveonline.com/v2/oauth/token",
+                request,
+                AccessTokenResponse.class
+            );
+        } catch (final HttpClientErrorException exception) {
+            if (exception.getStatusCode().value() == 400) {
+                String body = exception.getResponseBodyAsString();
+                if (body.contains("error") && body.contains("invalid_grant")) {
+                    // Invalid refresh token. Token missing/expired.
+                    character.setWalletReadRefreshToken(null);
+                    characterRepository.save(character);
+                }
+            }
+            throw exception;
+        }
+
+        return response.getBody();
     }
 
     private static HttpEntity<Object> authorizedRequest(final String accessToken, final String etag) {
