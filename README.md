@@ -2,13 +2,14 @@
 
 ### Changelog
 
-#### next
+#### 2.6.0
 
 Switched to EVE SSOv2
 
-- **Breaking Change**: The callback URL changed to `http://your.domain.tld/api/callback`
+- **Breaking Change**: The callback URL changed to `http://your.domain.tld/api/callback`, adjust on
+  developers.eveonline.com and in the environment variables SSO_URL and WALLET_URL.
 - **Breaking Change**: The OAuth login URL in the environment variables SSO_URL and WALLET_URL changed to
-  `https://login.eveonline.com/v2/oauth/authorize/`
+  `https://login.eveonline.com/v2/oauth/authorize/`.
 
 ### Setup
 
