@@ -2,6 +2,10 @@
 
 ### Changelog
 
+#### 2.6.1
+
+Added SERVER_PORT environment variable.
+
 #### 2.6.0
 
 Switched to EVE SSOv2
@@ -53,6 +57,7 @@ yarn start
 
 Run backend in development mode - replace *** and your Docker host IP for MongoDB, if necessary:
 ```shell
+export SERVER_PORT=8080
 export SSO_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Flocalhost:8080%2Fapi%2Fcallback&client_id=***&scope=&state=uniquestate123'
 export CLIENT_ID=***
 export CLIENT_SECRET=***
@@ -80,6 +85,7 @@ docker build --no-cache --file src/main/docker/Dockerfile -t brave-bucks target
 
 Run WAR file - replace *** and values for MONGO_URI, MONGO_DB, JWT_SECRET and redirect_uri with your values:
 ```shell
+export SERVER_PORT=8080
 WALLET_CLIENT_ID=*** \
 WALLET_CLIENT_SECRET=*** \
 WALLET_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Fbucks.bravecollective.com%2Fapi%2Fcallback&client_id=***&scope=esi-wallet.read_character_wallet.v1&state=wallet' \
@@ -96,6 +102,7 @@ java -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:gc.log -XX:+HeapDumpOnOu
 Run Docker container - replace *** and values for MONGO_URI, MONGO_DB, JWT_SECRET and redirect_uri with your values:
 ```shell
 docker run \
+  --env SERVER_PORT=8080 \
   --env WALLET_CLIENT_ID=*** \
   --env WALLET_CLIENT_SECRET=*** \
   --env WALLET_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=https%3A%2F%2Fbucks.bravecollective.com%2Fapi%2Fcallback&client_id=***&scope=esi-wallet.read_character_wallet.v1&state=wallet' \
