@@ -32,7 +32,10 @@ import static com.bravebucks.eve.domain.Constants.ALLIANCE_ID;
 import static com.bravebucks.eve.domain.enumeration.TransactionType.KILL;
 import static com.bravebucks.eve.domain.enumeration.TransactionType.RATTING;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -42,9 +45,14 @@ import io.github.jhipster.config.JHipsterConstants;
 
 @Service
 public class PayoutCalculator {
+    private static final Logger log = LoggerFactory.getLogger(KillmailParser.class);
 
-    private static final long KILL_BUDGET = 9_000_000_000L;
-    private static final long RATTING_BUDGET = 2_000_000_000L;
+    @Value("${KILL_BUDGET}")
+    private String envKillBudget;
+
+    @Value("${RATTING_BUDGET}")
+    private String envRattingBudget;
+
     private final KillmailRepository killmailRepository;
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
@@ -67,6 +75,26 @@ public class PayoutCalculator {
         this.env = env;
     }
 
+    public PayoutCalculator(final KillmailRepository killmailRepository,
+                            final UserRepository userRepository,
+                            final TransactionRepository transactionRepository,
+                            final RattingEntryRepository rattingEntryRepository,
+                            final CharacterRepository characterRepository,
+                            final Environment env,
+                            String envKillBudget,
+                            String envRattingBudget) {
+        this.killmailRepository = killmailRepository;
+        this.userRepository = userRepository;
+        this.rattingEntryRepository = rattingEntryRepository;
+        this.transactionRepository = transactionRepository;
+        this.characterRepository = characterRepository;
+        this.env = env;
+
+        // only for unit tests
+        this.envKillBudget = envKillBudget;
+        this.envRattingBudget = envRattingBudget;
+    }
+
     @PostConstruct
     public void init() {
         // dev only
@@ -79,6 +107,11 @@ public class PayoutCalculator {
     @Timed
     @Scheduled(cron = "0 0 11 * * *")
     public void calculatePayouts() {
+        if (envKillBudget == null || envRattingBudget == null) {
+            log.error("Missing environment variables KILL_BUDGET and/or RATTING_BUDGET");
+            return;
+        }
+
         final List<User> users = userRepository.findAllByCharacterIdNotNullAndAllianceId(ALLIANCE_ID);
         final List<Integer> characterIds = users.stream().map(u -> u.getCharacterId().intValue()).collect(toList());
 
@@ -101,7 +134,7 @@ public class PayoutCalculator {
                                                      final List<RattingEntry> pendingRattingEntries) {
         final List<Transaction> transactions = new ArrayList<>();
         final long totalPoints = getTotalRattingPoints(pendingRattingEntries, rattingUsers);
-        final long todayBudget = RATTING_BUDGET / LocalDate.now().getMonth().maxLength();
+        final long todayBudget = Long.parseLong(envRattingBudget) / LocalDate.now().getMonth().maxLength();
 
         for (User user : rattingUsers) {
             final long pointsForUser = getRattingPointsForUser(pendingRattingEntries, user);
@@ -121,7 +154,7 @@ public class PayoutCalculator {
     private Collection<Transaction> getKillmailTransactions(final List<User> users, final List<Integer> characterIds,
                                                             final List<Killmail> pendingKillmails) {
         final long totalPoints = getTotalPoints(pendingKillmails, characterIds);
-        final long todayBudget = KILL_BUDGET / LocalDate.now().getMonth().maxLength();
+        final long todayBudget = Long.parseLong(envKillBudget) / LocalDate.now().getMonth().maxLength();
 
         final Collection<Transaction> transactions = new ArrayList<>();
 

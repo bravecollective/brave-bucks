@@ -1,6 +1,10 @@
-[![codecov](https://codecov.io/gh/bahrmichael/brave-bucks/branch/master/graph/badge.svg)](https://codecov.io/gh/bahrmichael/brave-bucks)
+## Brave Bucks
 
 ### Changelog
+
+#### 2.7.0
+
+- **Breaking Change**: Added KILL_BUDGET and RATTING_BUDGET environment variables.
 
 #### 2.6.1
 
@@ -67,6 +71,8 @@ export WALLET_CLIENT_SECRET=***
 export MONGO_URI=mongodb://admin:password@172.17.0.1:27017/brave-bucks?authSource=admin
 export MONGO_DB=brave-bucks
 export JWT_SECRET=my-secret-token-to-change-in-production
+export KILL_BUDGET=9000000000
+export RATTING_BUDGET=2000000000
 
 ./mvnw
 ```
@@ -95,6 +101,8 @@ SSO_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redi
 MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority' \
 MONGO_DB=bucks \
 JWT_SECRET=my-secret-token-to-change-in-production \
+KILL_BUDGET=9000000000 \
+RATTING_BUDGET=2000000000 \
 java -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:gc.log -XX:+HeapDumpOnOutOfMemoryError \
 -XX:HeapDumpPath=/home/bucks/dump.hprof -jar ./target/braveBucks-*.war &
 ```
@@ -112,6 +120,8 @@ docker run \
   --env MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority' \
   --env MONGO_DB=bucks \
   --env JWT_SECRET=my-secret-token-to-change-in-production \
+  --env KILL_BUDGET=9000000000 \
+  --env RATTING_BUDGET=2000000000 \
   --network host \
   --rm brave-bucks
 ```

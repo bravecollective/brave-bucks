@@ -32,7 +32,8 @@ public class PayoutCalculatorTest {
     private RattingEntryRepository rattingEntryRepository = mock(RattingEntryRepository.class);
     private CharacterRepository characterRepository = mock(CharacterRepository.class);
     private PayoutCalculator sut = new PayoutCalculator(killmailRepo, userRepo, transactionRepo,
-                                                        rattingEntryRepository, characterRepository, null);
+                                                        rattingEntryRepository, characterRepository, null,
+                                                        "9000000000", "2000000000");
 
     @Test
     public void calculatePayouts() {
