@@ -145,7 +145,7 @@ Desktop.ini
 # Docker
 ######################
 /src/main/docker/.maven-repo
-/src/main/docker/.mongo-db
+/src/main/docker/.mongo-db*
 /src/main/docker/docker-compose.yml
 
 ######################

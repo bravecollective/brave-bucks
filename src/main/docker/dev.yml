@@ -7,10 +7,13 @@ services:
         volumes: [ "../../../:/opt/brave-bucks", "./.maven-repo:/root/.m2" ]
         ports: [ "8080:8080", "9000:9000", "3001:3001" ]
         working_dir: /opt/brave-bucks
+        depends_on: [brave-bucks-mongodb]
     brave-bucks-mongodb:
-        image: mongo:4.2-bionic
+        image: mongo:5.0-focal
+        #image: mongo:6.0-focal
         environment:
             MONGO_INITDB_ROOT_USERNAME: admin
             MONGO_INITDB_ROOT_PASSWORD: password
-        volumes: [ "./.mongo-db:/data/db" ]
+        volumes: [ "./.mongo-db-50:/data/db" ]
+        #volumes: [ "./.mongo-db-60:/data/db" ]
         ports: [ "27017:27017" ]

@@ -34,7 +34,7 @@ docker-compose up
 
 Import DB dump - replace IP with your host IP, if necessary:
 ```shell
-mongorestore --uri mongodb://admin:password@172.17.0.1/brave-bucks ./dump
+mongorestore --uri mongodb://admin:password@172.17.0.1:27017/brave-bucks?authSource=admin --drop --gzip --archive=brave-bucks.archive --nsInclude brave-bucks.*
 ```
 
 Start and enter Docker Java container:
