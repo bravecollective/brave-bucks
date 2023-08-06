@@ -2,6 +2,10 @@
 
 ### Changelog
 
+#### 2.7.1
+
+Fixed solar system search.
+
 #### 2.7.0
 
 - **Breaking Change**: Added KILL_BUDGET and RATTING_BUDGET environment variables.
