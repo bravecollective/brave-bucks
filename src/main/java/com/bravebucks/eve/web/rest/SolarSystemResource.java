@@ -73,18 +73,15 @@ public class SolarSystemResource {
 
         solarSystem.setSystemName(solarSystem.getSystemName().toUpperCase());
 
-        Optional<JsonNode> optional = jsonRequestService.searchSolarSystem(solarSystem.getSystemName());
+        Optional<Long> optional = jsonRequestService.searchSolarSystem(solarSystem.getSystemName());
         if (optional.isPresent()) {
-            JSONObject object = optional.get().getObject();
-            if (object.has("solar_system")) {
-                long systemId = object.getJSONArray("solar_system").getLong(0);
-                solarSystem.setSystemId(systemId);
-                SolarSystem result = solarSystemRepository.save(solarSystem);
-                return ResponseEntity.created(new URI("/api/solar-systems/" + result.getId()))
-                    .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId()))
-                    .body(result);
-            }
+            solarSystem.setSystemId(optional.get());
+            SolarSystem result = solarSystemRepository.save(solarSystem);
+            return ResponseEntity.created(new URI("/api/solar-systems/" + result.getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId()))
+                .body(result);
         }
+
         return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
             ENTITY_NAME,
             "notresolved",

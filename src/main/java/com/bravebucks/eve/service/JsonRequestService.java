@@ -12,8 +12,10 @@ import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.BaseRequest;
-import com.mashape.unirest.request.GetRequest;
 
+import com.mashape.unirest.request.body.RequestBodyEntity;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -57,11 +59,21 @@ public class JsonRequestService {
     }
 
     @Deprecated
-    public Optional<JsonNode> searchSolarSystem(final String systemName) {
-        String url = "https://esi.evetech.net/v2/search/?categories=solar_system&datasource=tranquility"
-                     + "&language=en-us&search=" + systemName + "&strict=true";
-        GetRequest getRequest = get(url);
-        return executeRequest(getRequest);
+    public Optional<Long> searchSolarSystem(final String systemName) {
+        String url = "https://esi.evetech.net/latest/universe/ids/?datasource=tranquility&language=en";
+        RequestBodyEntity postRequest = post(url, "[\""+systemName+"\"]");
+        Optional<JsonNode> optional = executeRequest(postRequest);
+        if (optional.isPresent()) {
+            JSONObject object = optional.get().getObject();
+            if (object.has("systems")) {
+                JSONArray systems = object.getJSONArray("systems");
+                if (systems.opt(0) != null) {
+                    Long systemId = systems.getJSONObject(0).getLong("id");
+                    return Optional.of(systemId);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     Optional<JsonNode> executeRequest(final BaseRequest request) {
@@ -78,7 +90,7 @@ public class JsonRequestService {
         }
     }
 
-    GetRequest get(String url) {
-        return Unirest.get(url).headers(defaultHeaders);
+    RequestBodyEntity post(String url, String body) {
+        return Unirest.post(url).headers(defaultHeaders).body(body);
     }
 }
