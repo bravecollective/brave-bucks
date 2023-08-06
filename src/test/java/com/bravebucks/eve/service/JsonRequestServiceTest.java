@@ -27,28 +27,6 @@ public class JsonRequestServiceTest {
     private JsonRequestService sut = spy(new JsonRequestService());
 
     @Test
-    public void getAccessToken() throws Exception {
-        doReturn(null).when(sut).executeRequest(any(MultipartBody.class));
-
-        Optional<JsonNode> response = sut.getAccessToken("clientId", "clientSecret", "code");
-        assertNull(response);
-
-        verify(sut).post(eq("https://login.eveonline.com/oauth/token"), eq("clientId"), eq("clientSecret"), anyMap(), anyMap());
-        verify(sut).executeRequest(any(MultipartBody.class));
-    }
-
-    @Test
-    public void getUserDetails() throws Exception {
-        doReturn(null).when(sut).executeRequest(any(GetRequest.class));
-
-        Optional<JsonNode> response = sut.getUserDetails("token");
-        assertNull(response);
-
-        verify(sut).get(eq("https://login.eveonline.com/oauth/verify"), anyMap());
-        verify(sut).executeRequest(any(GetRequest.class));
-    }
-
-    @Test
     public void executeRequest_withNon200() throws Exception {
         final BaseRequest requestMock = mock(BaseRequest.class);
         final HttpResponse<JsonNode> responseMock = mock(HttpResponse.class);

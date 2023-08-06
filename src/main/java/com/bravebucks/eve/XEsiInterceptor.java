@@ -20,7 +20,7 @@ public class XEsiInterceptor implements ClientHttpRequestInterceptor {
                                         final ClientHttpRequestExecution execution)
         throws IOException {
         final HttpHeaders headers = request.getHeaders();
-        headers.add("User-Agent", "Rihan Shazih: bucks.bravecollective.com");
+        headers.add("User-Agent", "https://github.com/bravecollective/brave-bucks");
         // OkHttp will add encoding by default https://github.com/square/okhttp/wiki/Calls
         final ClientHttpResponse response = execution.execute(request, body);
         checkForDeprecation(response, request);

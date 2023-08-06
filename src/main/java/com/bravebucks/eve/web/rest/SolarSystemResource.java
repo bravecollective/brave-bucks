@@ -59,10 +59,16 @@ public class SolarSystemResource {
      */
     @Secured(AuthoritiesConstants.MANAGER)
     @PostMapping("/solar-systems")
-    public ResponseEntity<SolarSystem> createSolarSystem(@RequestBody SolarSystem solarSystem) throws URISyntaxException {
+    public ResponseEntity<SolarSystem> createSolarSystem(@RequestBody SolarSystem solarSystem)
+        throws URISyntaxException {
+
         log.debug("REST request to save SolarSystem : {}", solarSystem);
         if (solarSystem.getId() != null) {
-            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new solarSystem cannot already have an ID")).body(null);
+            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
+                ENTITY_NAME,
+                "idexists",
+                "A new solarSystem cannot already have an ID"
+            )).body(null);
         }
 
         solarSystem.setSystemName(solarSystem.getSystemName().toUpperCase());
@@ -75,12 +81,15 @@ public class SolarSystemResource {
                 solarSystem.setSystemId(systemId);
                 SolarSystem result = solarSystemRepository.save(solarSystem);
                 return ResponseEntity.created(new URI("/api/solar-systems/" + result.getId()))
-                                     .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-                                     .body(result);
+                    .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId()))
+                    .body(result);
             }
         }
-        return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "notresolved",
-                                                                                 "The system could not be found. Is there a typo?")).body(null);
+        return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(
+            ENTITY_NAME,
+            "notresolved",
+            "The system could not be found. Is there a typo?"
+        )).body(null);
     }
 
     /**
