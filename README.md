@@ -2,6 +2,10 @@
 
 ### Changelog
 
+#### 2.7.2
+
+Fixed zkillboard URL.
+
 #### 2.7.1
 
 Fixed solar system search.
