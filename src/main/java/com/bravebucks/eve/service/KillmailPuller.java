@@ -53,8 +53,8 @@ public class KillmailPuller {
     public void cron() {
         final List<KillmailPackage> packages = new ArrayList<>();
         while (true) {
-            RedisQResponse response = restTemplate.getForObject("https://redisq.zkillboard.com/listen.php?ttw=1",
-                                                                RedisQResponse.class, new HashMap<>());
+            RedisQResponse response = restTemplate.getForObject("https://redisq.zkillboard.com/listen.php?queueID=bravebuckaroos&ttw=1",
+                RedisQResponse.class, new HashMap<>());
 
             if (response.getKillmailPackage() == null || packages.size() >= 100) {
                 break;
