@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.bravebucks.eve.domain.esi.UniverseName;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,9 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class UniverseNamesClient {
+
+    @Value("${ESI_DOMAIN}")
+    private String esiDomain;
 
     private final RestTemplate restTemplate;
 
@@ -67,7 +71,7 @@ public class UniverseNamesClient {
     }
 
     ResponseEntity<UniverseName[]> doCall(List<Integer> ids) {
-        final String url = "https://esi.evetech.net/v3/universe/names/";
+        final String url = esiDomain + "/v3/universe/names/";
         final HttpEntity<Integer[]> request = new HttpEntity(ids, null);
         return restTemplate.exchange(url, HttpMethod.POST, request, UniverseName[].class);
     }

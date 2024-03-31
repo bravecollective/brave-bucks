@@ -46,6 +46,9 @@ public class WalletParser {
     @Value("${OAUTH_TOKEN_URL}")
     private String oauthTokenUrl;
 
+    @Value("${ESI_DOMAIN}")
+    private String esiDomain;
+
     private final RestTemplate restTemplate;
     private final AdmService admService;
     private final RattingEntryRepository rattingEntryRepository;
@@ -144,7 +147,7 @@ public class WalletParser {
         final AccessTokenResponse token = getAccessTokenWithRefreshToken(character, walletClientId, walletClientSecret);
         updateRefreshToken(character, token);
 
-        final String walletUri = "https://esi.evetech.net/v6/characters/" + character.getId() + "/wallet/journal/";
+        final String walletUri = esiDomain + "/v6/characters/" + character.getId() + "/wallet/journal/";
 
         return restTemplate.exchange(walletUri, HttpMethod.GET, authorizedRequest(token.getAccessToken(),
                                                                                   eTag), WalletResponse[].class);

@@ -5,6 +5,7 @@
 #### 2.7.3
 
 - **Breaking Change**: Added OAUTH_TOKEN_URL environment variable.
+- **Breaking Change**: Added ESI_DOMAIN environment variable.
 
 #### 2.7.2
 
@@ -81,6 +82,7 @@ export WALLET_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type
 export WALLET_CLIENT_ID=***
 export WALLET_CLIENT_SECRET=***
 export OAUTH_TOKEN_URL='https://login.eveonline.com/v2/oauth/token'
+export ESI_DOMAIN='https://esi.evetech.net'
 export MONGO_URI=mongodb://admin:password@172.17.0.1:27017/brave-bucks?authSource=admin
 export MONGO_DB=brave-bucks
 export JWT_SECRET=my-secret-token-to-change-in-production
@@ -116,6 +118,7 @@ CLIENT_ID=*** \
 CLIENT_SECRET=*** \
 SSO_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Fbucks.bravecollective.com%2Fapi%2Fcallback&client_id=***&scope=&state=uniquestate123' \
 OAUTH_TOKEN_URL='https://login.eveonline.com/v2/oauth/token' \
+ESI_DOMAIN='https://esi.evetech.net' \
 MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority' \
 MONGO_DB=bucks \
 JWT_SECRET=my-secret-token-to-change-in-production \
@@ -136,6 +139,7 @@ docker run \
   --env CLIENT_SECRET=*** \
   --env SSO_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=https%3A%2F%2Fbucks.bravecollective.com%2Fapi%2Fcallback&client_id=***&scope=&state=uniquestate123' \
   --env OAUTH_TOKEN_URL='https://login.eveonline.com/v2/oauth/token' \
+  --env ESI_DOMAIN='https://esi.evetech.net' \
   --env MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority' \
   --env MONGO_DB=bucks \
   --env JWT_SECRET=my-secret-token-to-change-in-production \

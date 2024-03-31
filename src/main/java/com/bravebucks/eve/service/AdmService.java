@@ -10,6 +10,7 @@ import com.codahale.metrics.annotation.Timed;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,10 +20,13 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class AdmService {
 
+    @Value("${ESI_DOMAIN}")
+    private String esiDomain;
+
     private static final Logger LOG = LoggerFactory.getLogger(AdmService.class);
-    private static final String URL = "https://esi.evetech.net/v1/sovereignty/structures/";
 
     private final RestTemplate restTemplate;
+
     private final Map<Integer, Double> systemAdms = new HashMap<>();
 
     public AdmService(final RestTemplate restTemplate) {
@@ -48,7 +52,11 @@ public class AdmService {
     @Scheduled(cron = "0 30 */3 * * *")
     @Timed
     public void update() {
-        final ResponseEntity<AdmResponse[]> admResponse = restTemplate.getForEntity(URL, AdmResponse[].class, new HashMap<>());
+        final ResponseEntity<AdmResponse[]> admResponse = restTemplate.getForEntity(
+            esiDomain + "/v1/sovereignty/structures/",
+            AdmResponse[].class,
+            new HashMap<>()
+        );
 
         if (admResponse.getStatusCode() != HttpStatus.OK) {
             LOG.info("ADM status code was {}. Aborting.", admResponse.getStatusCode());

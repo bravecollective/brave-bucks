@@ -18,11 +18,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 @Deprecated
 public class JsonRequestService {
+
+    @Value("${ESI_DOMAIN}")
+    private String esiDomain;
 
     private static final String WRONG_STATUS_CODE = "{} returned status code {}.";
     private static final String UNIREST_EXCEPTION = "Failed to get data from url={}";
@@ -60,7 +64,7 @@ public class JsonRequestService {
 
     @Deprecated
     public Optional<Long> searchSolarSystem(final String systemName) {
-        String url = "https://esi.evetech.net/latest/universe/ids/?datasource=tranquility&language=en";
+        String url = esiDomain + "/latest/universe/ids/?datasource=tranquility&language=en";
         RequestBodyEntity postRequest = post(url, "[\""+systemName+"\"]");
         Optional<JsonNode> optional = executeRequest(postRequest);
         if (optional.isPresent()) {

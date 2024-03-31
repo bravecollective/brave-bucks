@@ -10,6 +10,7 @@ import com.codahale.metrics.annotation.Timed;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,9 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class AllianceParser {
+
+    @Value("${ESI_DOMAIN}")
+    private String esiDomain;
 
     private static final Logger log = LoggerFactory.getLogger(AllianceParser.class);
 
@@ -39,7 +43,7 @@ public class AllianceParser {
     }
 
     public void updateAllianceForUser(final User user) {
-        final String uri = "https://esi.evetech.net/v5/characters/" + user.getCharacterId() + "/";
+        final String uri = esiDomain + "/v5/characters/" + user.getCharacterId() + "/";
         try {
             final CharacterInfoResponse characterInfo = restTemplate.getForObject(uri, CharacterInfoResponse.class,
                                                                                   new HashMap<>());
