@@ -2,7 +2,7 @@
 
 ### Changelog
 
-#### 2.7.3
+#### 2.8.0
 
 - **Breaking Change**: Added OAUTH_TOKEN_URL environment variable.
 - **Breaking Change**: Added ESI_DOMAIN environment variable.
