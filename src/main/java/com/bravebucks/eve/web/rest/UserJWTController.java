@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +66,9 @@ public class UserJWTController {
     @Value("${WALLET_CLIENT_SECRET}")
     private String walletClientSecret;
 
+    @Value("${OAUTH_TOKEN_URL}")
+    private String oauthTokenUrl;
+
     private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
     private final UserService userService;
@@ -87,14 +89,21 @@ public class UserJWTController {
     }
 
     @GetMapping("/callback")
-    public void callback(@RequestParam("code") String code, @RequestParam("state") String state, HttpServletResponse response) throws IOException {
+    public void callback(
+        @RequestParam("code") String code,
+        @RequestParam("state") String state,
+        HttpServletResponse response
+    ) throws IOException {
         response.sendRedirect("/#/callback?code=" + code + "&state=" + state);
     }
 
     @GetMapping("/authenticate/sso")
     @Timed
-    public ResponseEntity authorize(@RequestParam("code") String code, @RequestParam("state") String state, HttpServletResponse response) {
-
+    public ResponseEntity authorize(
+        @RequestParam("code") String code,
+        @RequestParam("state") String state,
+        HttpServletResponse response
+    ) {
         User user;
         if (state.startsWith("wallet")) {
             final String[] split = state.split("-");
@@ -105,11 +114,16 @@ public class UserJWTController {
 
             String targetUserId = split[1];
 
-            final AuthVerificationResponse authResponse = verifyAuthentication(code, state, walletClientId, walletClientSecret);
+            final AuthVerificationResponse authResponse =
+                verifyAuthentication(code, state, walletClientId, walletClientSecret);
             final CharacterDetailsResponse charDetails = getCharacterDetails(authResponse.getAccessToken());
 
-            final EveCharacter character = new EveCharacter(charDetails.getCharacterId(), charDetails.getCharacterName(),
-                                                    authResponse.getRefreshToken(), targetUserId);
+            final EveCharacter character = new EveCharacter(
+                charDetails.getCharacterId(),
+                charDetails.getCharacterName(),
+                authResponse.getRefreshToken(),
+                targetUserId
+            );
             characterRepository.save(character);
             user = userRepository.findOne(targetUserId);
         } else {
@@ -124,7 +138,11 @@ public class UserJWTController {
         try {
             List<SimpleGrantedAuthority> authorities = user.getAuthorities().stream().map(
                 a -> new SimpleGrantedAuthority(a.getName())).collect(Collectors.toList());
-            Authentication authentication = new UsernamePasswordAuthenticationToken(user.getLogin(), user.getLogin(), authorities);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                user.getLogin(),
+                user.getLogin(),
+                authorities
+            );
             String jwt = tokenProvider.createToken(authentication, true);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             response.addHeader(AUTHORIZATION_HEADER, "Bearer " + jwt);
@@ -150,7 +168,12 @@ public class UserJWTController {
         return detail;
     }
 
-    private AuthVerificationResponse verifyAuthentication(final String code, final String state, final String clientId, final String clientSecret) {
+    private AuthVerificationResponse verifyAuthentication(
+        final String code,
+        final String state,
+        final String clientId,
+        final String clientSecret
+    ) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -161,13 +184,12 @@ public class UserJWTController {
         map.add("code", code);
 
         final HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        return restTemplate.postForObject("https://login.eveonline.com/v2/oauth/token", request, AuthVerificationResponse.class);
+        return restTemplate.postForObject(oauthTokenUrl, request, AuthVerificationResponse.class);
     }
 
     public static String getBasicAuth(final String clientId, final String clientSecret) {
         final String auth = clientId + ":" + clientSecret;
-        final byte[] encodedAuth = Base64.encodeBase64(
-            auth.getBytes(Charset.forName("UTF-8")));
+        final byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("UTF-8")));
         return "Basic " + new String(encodedAuth);
     }
 

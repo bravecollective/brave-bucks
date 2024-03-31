@@ -43,6 +43,9 @@ public class WalletParser {
     @Value("${WALLET_CLIENT_SECRET}")
     private String walletClientSecret;
 
+    @Value("${OAUTH_TOKEN_URL}")
+    private String oauthTokenUrl;
+
     private final RestTemplate restTemplate;
     private final AdmService admService;
     private final RattingEntryRepository rattingEntryRepository;
@@ -64,6 +67,7 @@ public class WalletParser {
         this.characterRepository = characterRepository;
     }
 
+    @SuppressWarnings("unused")
     @Async
     @Scheduled(cron = "0 */20 * * * *")
     public void collectNewJournalEntries() {
@@ -179,11 +183,7 @@ public class WalletParser {
 
         ResponseEntity<AccessTokenResponse> response;
         try {
-            response = restTemplate.postForEntity(
-                "https://login.eveonline.com/v2/oauth/token",
-                request,
-                AccessTokenResponse.class
-            );
+            response = restTemplate.postForEntity(oauthTokenUrl, request, AccessTokenResponse.class);
         } catch (final HttpClientErrorException exception) {
             if (exception.getStatusCode().value() == 400) {
                 String body = exception.getResponseBodyAsString();

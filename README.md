@@ -2,6 +2,10 @@
 
 ### Changelog
 
+#### 2.7.3
+
+- **Breaking Change**: Added OAUTH_TOKEN_URL environment variable.
+
 #### 2.7.2
 
 Fixed zkillboard URL.
@@ -76,13 +80,18 @@ export CLIENT_SECRET=***
 export WALLET_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Flocalhost:8080%2Fapi%2Fcallback&client_id=***&scope=esi-wallet.read_character_wallet.v1&state=wallet'
 export WALLET_CLIENT_ID=***
 export WALLET_CLIENT_SECRET=***
+export OAUTH_TOKEN_URL='https://login.eveonline.com/v2/oauth/token'
 export MONGO_URI=mongodb://admin:password@172.17.0.1:27017/brave-bucks?authSource=admin
 export MONGO_DB=brave-bucks
 export JWT_SECRET=my-secret-token-to-change-in-production
 export KILL_BUDGET=9000000000
 export RATTING_BUDGET=2000000000
 
+# start server
 ./mvnw
+
+# run tests
+./mvnw test
 ```
 
 Build WAR file and Docker container for production mode:
@@ -106,6 +115,7 @@ WALLET_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&r
 CLIENT_ID=*** \
 CLIENT_SECRET=*** \
 SSO_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Fbucks.bravecollective.com%2Fapi%2Fcallback&client_id=***&scope=&state=uniquestate123' \
+OAUTH_TOKEN_URL='https://login.eveonline.com/v2/oauth/token' \
 MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority' \
 MONGO_DB=bucks \
 JWT_SECRET=my-secret-token-to-change-in-production \
@@ -125,6 +135,7 @@ docker run \
   --env CLIENT_ID=*** \
   --env CLIENT_SECRET=*** \
   --env SSO_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=https%3A%2F%2Fbucks.bravecollective.com%2Fapi%2Fcallback&client_id=***&scope=&state=uniquestate123' \
+  --env OAUTH_TOKEN_URL='https://login.eveonline.com/v2/oauth/token' \
   --env MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority' \
   --env MONGO_DB=bucks \
   --env JWT_SECRET=my-secret-token-to-change-in-production \
