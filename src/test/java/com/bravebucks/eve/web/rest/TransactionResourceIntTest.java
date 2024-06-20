@@ -11,9 +11,9 @@ import com.bravebucks.eve.service.TransactionService;
 import com.bravebucks.eve.web.rest.errors.ExceptionTranslator;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +21,7 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @see TransactionResource
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = BraveBucksApp.class)
 @ContextConfiguration(initializers = EnvironmentTestConfiguration.class)
 public class TransactionResourceIntTest {
@@ -79,7 +79,7 @@ public class TransactionResourceIntTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         final TransactionResource transactionResource = new TransactionResource(transactionService, userRepository);
@@ -87,6 +87,8 @@ public class TransactionResourceIntTest {
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setMessageConverters(jacksonMessageConverter).build();
+
+        initTest();
 
         final User user = new User();
         user.setLogin(DEFAULT_USER);
@@ -108,8 +110,9 @@ public class TransactionResourceIntTest {
         return transaction;
     }
 
-    @Before
     public void initTest() {
+        userRepository.deleteAll();
+
         transactionRepository.deleteAll();
         transaction = createEntity();
     }
@@ -160,7 +163,7 @@ public class TransactionResourceIntTest {
         // Get all the transactionList
         restTransactionMockMvc.perform(get("/api/transactions?sort=id,desc"))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(transaction.getId())))
             .andExpect(jsonPath("$.[*].user").value(hasItem(DEFAULT_USER.toString())))
             .andExpect(jsonPath("$.[*].instant").value(hasItem(DEFAULT_INSTANT.toString())))
@@ -176,7 +179,7 @@ public class TransactionResourceIntTest {
         // Get the transaction
         restTransactionMockMvc.perform(get("/api/transactions/{id}", transaction.getId()))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(transaction.getId()))
             .andExpect(jsonPath("$.user").value(DEFAULT_USER.toString()))
             .andExpect(jsonPath("$.instant").value(DEFAULT_INSTANT.toString()))
@@ -199,7 +202,7 @@ public class TransactionResourceIntTest {
         int databaseSizeBeforeUpdate = transactionRepository.findAll().size();
 
         // Update the transaction
-        Transaction updatedTransaction = transactionRepository.findOne(transaction.getId());
+        Transaction updatedTransaction = transactionRepository.findById(transaction.getId()).orElse(null);
         updatedTransaction
             .user(UPDATED_USER)
             .instant(UPDATED_INSTANT)

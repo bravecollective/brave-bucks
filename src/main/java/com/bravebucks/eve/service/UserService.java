@@ -40,7 +40,7 @@ public class UserService {
 
     public User createUser(final String login, final int characterId) {
         User newUser = new User();
-        Authority authority = authorityRepository.findOne(AuthoritiesConstants.USER);
+        Authority authority = authorityRepository.findById(AuthoritiesConstants.USER).orElse(null);
         Set<Authority> authorities = new HashSet<>();
         newUser.setLogin(login);
         newUser.setCharacterId((long) characterId);
@@ -63,14 +63,18 @@ public class UserService {
      */
     public Optional<UserDTO> updateUser(UserDTO userDTO) {
         return Optional.of(userRepository
-            .findOne(userDTO.getId()))
+            .findById(userDTO.getId()))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
             .map(user -> {
                 user.setLogin(userDTO.getLogin());
                 user.setActivated(userDTO.isActivated());
                 Set<Authority> managedAuthorities = user.getAuthorities();
                 managedAuthorities.clear();
                 userDTO.getAuthorities().stream()
-                    .map(authorityRepository::findOne)
+                    .map(authorityRepository::findById)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .forEach(managedAuthorities::add);
                 userRepository.save(user);
                 log.debug("Changed Information for User: {}", user);
@@ -95,7 +99,7 @@ public class UserService {
     }
 
     public User getUserWithAuthorities(String id) {
-        return userRepository.findOne(id);
+        return userRepository.findById(id).orElse(null);
     }
 
     public User getUserWithAuthorities() {

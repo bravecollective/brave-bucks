@@ -21,6 +21,9 @@ management:
     health:
         mail:
             enabled: false # When using the MailService, configure an SMTP server and set this to true
+    endpoint:
+        metrics:
+            enabled: true # Check this replaces MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class
 spring:
     application:
         name: braveBucks
@@ -38,8 +41,9 @@ spring:
         mongodb:
             uri: ${MONGO_URI}
             database: ${MONGO_DB}
+            auto-index-creation: true
     thymeleaf:
-        mode: XHTML
+        mode: HTML
 
 security:
     basic:
@@ -95,6 +99,15 @@ jhipster:
         license-url:
     ribbon:
         display-on-active-profiles: dev
+
+mongock:
+    change-logs-scan-package:
+        - com.bravebucks.eve.config.dbmigrations
+    mongo-db:
+        read-concern: majority  # try 'local' if this doesn't work for you
+        write-concern:
+            journal: false
+#            w: majority
 
 # ===================================================================
 # Application specific properties

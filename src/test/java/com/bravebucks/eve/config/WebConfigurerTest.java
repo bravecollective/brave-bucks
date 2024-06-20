@@ -10,9 +10,10 @@ import io.undertow.Undertow;
 import io.undertow.Undertow.Builder;
 import io.undertow.UndertowOptions;
 import org.apache.commons.io.FilenameUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.boot.context.embedded.undertow.UndertowEmbeddedServletContainerFactory;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.web.embedded.undertow.UndertowServletWebServerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.mock.web.MockServletContext;
@@ -51,7 +52,7 @@ public class WebConfigurerTest {
 
     private MetricRegistry metricRegistry;
 
-    @Before
+    @BeforeEach
     public void setup() {
         servletContext = spy(new MockServletContext());
         doReturn(new MockFilterRegistration())
@@ -94,7 +95,7 @@ public class WebConfigurerTest {
     @Test
     public void testCustomizeServletContainer() {
         env.setActiveProfiles(JHipsterConstants.SPRING_PROFILE_PRODUCTION);
-        UndertowEmbeddedServletContainerFactory container = new UndertowEmbeddedServletContainerFactory();
+        UndertowServletWebServerFactory container = new UndertowServletWebServerFactory();
         webConfigurer.customize(container);
         assertThat(container.getMimeMappings().get("abs")).isEqualTo("audio/x-mpeg");
         assertThat(container.getMimeMappings().get("html")).isEqualTo("text/html;charset=utf-8");
@@ -112,7 +113,7 @@ public class WebConfigurerTest {
     @Test
     public void testUndertowHttp2Enabled() {
         props.getHttp().setVersion(JHipsterProperties.Http.Version.V_2_0);
-        UndertowEmbeddedServletContainerFactory container = new UndertowEmbeddedServletContainerFactory();
+        UndertowServletWebServerFactory container = new UndertowServletWebServerFactory();
         webConfigurer.customize(container);
         Builder builder = Undertow.builder();
         container.getBuilderCustomizers().forEach(c -> c.customize(builder));
@@ -122,7 +123,7 @@ public class WebConfigurerTest {
 
     @Test
     public void testCorsFilterOnApiPath() throws Exception {
-        props.getCors().setAllowedOrigins(Collections.singletonList("*"));
+        props.getCors().setAllowedOrigins(Collections.singletonList("other.domain.com"));
         props.getCors().setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         props.getCors().setAllowedHeaders(Collections.singletonList("*"));
         props.getCors().setMaxAge(1800L);
@@ -148,11 +149,20 @@ public class WebConfigurerTest {
                 .header(HttpHeaders.ORIGIN, "other.domain.com"))
             .andExpect(status().isOk())
             .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "other.domain.com"));
+
+        mockMvc.perform(
+                options("/api/test-cors")
+                    .header(HttpHeaders.ORIGIN, "notthis.domain.com")
+                    .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "POST"))
+            .andExpect(status().isForbidden())
+            .andExpect(header().string(HttpHeaders.VARY, "Origin"))
+            .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, Matchers.nullValue()))
+            .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, Matchers.nullValue()));
     }
 
     @Test
     public void testCorsFilterOnOtherPath() throws Exception {
-        props.getCors().setAllowedOrigins(Collections.singletonList("*"));
+        props.getCors().setAllowedOrigins(Collections.singletonList("other.domain.com"));
         props.getCors().setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         props.getCors().setAllowedHeaders(Collections.singletonList("*"));
         props.getCors().setMaxAge(1800L);
@@ -167,6 +177,16 @@ public class WebConfigurerTest {
                 .header(HttpHeaders.ORIGIN, "other.domain.com"))
             .andExpect(status().isOk())
             .andExpect(header().doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN));
+
+        mockMvc.perform(
+                options("/api/test-cors")
+                    .header(HttpHeaders.ORIGIN, "notthis.domain.com")
+                    .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "POST"))
+            .andExpect(status().isForbidden())
+            .andExpect(header().string(HttpHeaders.VARY, "Origin"))
+            .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, Matchers.nullValue()))
+            .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, Matchers.nullValue()));
+
     }
 
     @Test

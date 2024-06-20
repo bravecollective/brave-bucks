@@ -92,7 +92,7 @@ public class PayoutResource {
     @Secured(AuthoritiesConstants.MANAGER)
     public void markPaid(@PathVariable("id") final String id) {
         log.debug("REST request to mark Payout paid: {}", id);
-        final Payout payout = payoutRepository.findOne(id);
+        final Payout payout = payoutRepository.findById(id).orElse(null);
         payout.setStatus(PayoutStatus.PAID);
         addTransactionIfPaid(payout);
         payoutRepository.save(payout);
@@ -181,7 +181,7 @@ public class PayoutResource {
             return createPayout(payout);
         }
 
-        final Payout existing = payoutRepository.findOne(payout.getId());
+        final Payout existing = payoutRepository.findById(payout.getId()).orElse(null);
         if (null == existing) {
             return ResponseEntity.notFound().build();
         }
@@ -245,8 +245,8 @@ public class PayoutResource {
     @Secured(AuthoritiesConstants.MANAGER)
     public ResponseEntity<Payout> getPayout(@PathVariable String id) {
         log.debug("REST request to get Payout : {}", id);
-        Payout payout = payoutRepository.findOne(id);
-        return ResponseUtil.wrapOrNotFound(Optional.ofNullable(payout));
+        Optional<Payout> payout = payoutRepository.findById(id);
+        return ResponseUtil.wrapOrNotFound(payout);
     }
 
     /**
@@ -260,7 +260,7 @@ public class PayoutResource {
     public ResponseEntity<Void> deletePayout(@PathVariable String id) {
         log.debug("REST request to delete Payout : {}", id);
 
-        final Payout existing = payoutRepository.findOne(id);
+        final Payout existing = payoutRepository.findById(id).orElse(null);
         if (null == existing) {
             return ResponseEntity.notFound().build();
         }
@@ -268,7 +268,7 @@ public class PayoutResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "badstatus", "A payout with status PAID cannot be modified.")).body(null);
         }
 
-        payoutRepository.delete(id);
+        payoutRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id)).build();
     }
 }

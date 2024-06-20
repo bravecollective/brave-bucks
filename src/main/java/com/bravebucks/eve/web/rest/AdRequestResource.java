@@ -166,7 +166,7 @@ public class AdRequestResource {
     @GetMapping("/ad-requests/{id}")
     public ResponseEntity<AdRequest> getAdRequest(@PathVariable String id) {
         log.debug("REST request to get AdRequest : {}", id);
-        AdRequest adRequest = adRequestRepository.findOne(id);
+        AdRequest adRequest = adRequestRepository.findById(id).orElse(null);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(adRequest));
     }
 
@@ -180,7 +180,7 @@ public class AdRequestResource {
     @DeleteMapping("/ad-requests/{id}")
     public ResponseEntity<Void> deleteAdRequest(@PathVariable String id) {
         log.debug("REST request to delete AdRequest : {}", id);
-        adRequestRepository.delete(id);
+        adRequestRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id)).build();
     }
 }
