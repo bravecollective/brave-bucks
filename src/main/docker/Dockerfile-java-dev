@@ -1,5 +1,5 @@
-FROM openjdk:8-jdk-buster
+FROM openjdk:8-jdk-bullseye
 
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_22.x | bash - && \
   apt-get update && \
-  apt-get install -y nodejs=8.17.0-1nodesource1
+  apt-get install -y nodejs
