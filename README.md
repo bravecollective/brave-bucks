@@ -2,6 +2,10 @@
 
 ### Changelog
 
+#### 2.8.1
+
+Fix RedisQ URL
+
 #### 2.8.0
 
 - **Breaking Change**: Added OAUTH_TOKEN_URL environment variable.
