@@ -1,5 +1,10 @@
-FROM openjdk:8-jdk-bullseye
+FROM openjdk:8-jdk-buster
 
-RUN curl -sL https://deb.nodesource.com/setup_22.x | bash - && \
+RUN sed -i 's/deb.debian.org\/debian-security/archive.debian.org\/debian-archive\/debian-security/g' /etc/apt/sources.list
+RUN sed -i 's/deb.debian.org\/debian/archive.debian.org\/debian-archive\/debian/g' /etc/apt/sources.list
+
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
   apt-get update && \
-  apt-get install -y nodejs
+  apt-get install -y nodejs=8.17.0-1nodesource1
+
+RUN npm install --global yarn
