@@ -125,7 +125,7 @@ public class UserJWTController {
                 targetUserId
             );
             characterRepository.save(character);
-            user = userRepository.findOne(targetUserId);
+            user = userRepository.findById(targetUserId).orElse(null);
         } else {
             final AuthVerificationResponse authResponse = verifyAuthentication(code, state, clientId, clientSecret);
             final CharacterDetailsResponse charDetails = getCharacterDetails(authResponse.getAccessToken());

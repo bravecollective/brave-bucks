@@ -2,8 +2,8 @@ package com.bravebucks.eve.config;
 
 import io.github.jhipster.config.JHipsterProperties;
 
-import com.codahale.metrics.JmxReporter;
-import com.codahale.metrics.JvmAttributeGaugeSet;
+import com.codahale.metrics.jmx.JmxReporter;
+import com.codahale.metrics.jvm.JvmAttributeGaugeSet;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
 import com.codahale.metrics.health.HealthCheckRegistry;
@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -43,13 +44,13 @@ public class MetricsConfiguration extends MetricsConfigurerAdapter {
     }
 
     @Override
-    @Bean
+//    @Bean
     public MetricRegistry getMetricRegistry() {
         return metricRegistry;
     }
 
     @Override
-    @Bean
+//    @Bean
     public HealthCheckRegistry getHealthCheckRegistry() {
         return healthCheckRegistry;
     }

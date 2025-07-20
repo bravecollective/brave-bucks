@@ -6,9 +6,9 @@ import com.bravebucks.eve.config.Constants;
 import com.bravebucks.eve.config.audit.AuditEventConverter;
 import com.bravebucks.eve.web.rest.EnvironmentTestConfiguration;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +16,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.servlet.http.HttpSession;
 import java.time.Instant;
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -32,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @see CustomAuditEventRepository
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = BraveBucksApp.class)
 @ContextConfiguration(initializers = EnvironmentTestConfiguration.class)
 public class CustomAuditEventRepositoryIntTest {
@@ -51,7 +52,7 @@ public class CustomAuditEventRepositoryIntTest {
 
     private PersistentAuditEvent testOldUserEvent;
 
-    @Before
+    @BeforeEach
     public void setup() {
         customAuditEventRepository = new CustomAuditEventRepository(persistenceAuditEventRepository, auditEventConverter);
         persistenceAuditEventRepository.deleteAll();
@@ -89,7 +90,7 @@ public class CustomAuditEventRepositoryIntTest {
         assertThat(event.getType()).isEqualTo(testUserEvent.getAuditEventType());
         assertThat(event.getData()).containsKey("test-key");
         assertThat(event.getData().get("test-key").toString()).isEqualTo("test-value");
-        assertThat(event.getTimestamp()).isEqualTo(Date.from(testUserEvent.getAuditEventDate()));
+        assertThat(event.getTimestamp().truncatedTo(MILLIS)).isEqualTo(testUserEvent.getAuditEventDate().truncatedTo(MILLIS));
     }
 
     @Test
@@ -106,7 +107,7 @@ public class CustomAuditEventRepositoryIntTest {
         assertThat(event.getType()).isEqualTo(testUserEvent.getAuditEventType());
         assertThat(event.getData()).containsKey("test-key");
         assertThat(event.getData().get("test-key").toString()).isEqualTo("test-value");
-        assertThat(event.getTimestamp()).isEqualTo(Date.from(testUserEvent.getAuditEventDate()));
+        assertThat(event.getTimestamp().truncatedTo(MILLIS)).isEqualTo(testUserEvent.getAuditEventDate().truncatedTo(MILLIS));
     }
 
     @Test
@@ -145,14 +146,14 @@ public class CustomAuditEventRepositoryIntTest {
         persistenceAuditEventRepository.save(testUserOtherTypeEvent);
 
         List<AuditEvent> events = customAuditEventRepository.find("test-user",
-            Date.from(testUserEvent.getAuditEventDate().minusSeconds(3600)), "test-type");
+            testUserEvent.getAuditEventDate().minusSeconds(3600), "test-type");
         assertThat(events).hasSize(1);
         AuditEvent event = events.get(0);
         assertThat(event.getPrincipal()).isEqualTo(testUserEvent.getPrincipal());
         assertThat(event.getType()).isEqualTo(testUserEvent.getAuditEventType());
         assertThat(event.getData()).containsKey("test-key");
         assertThat(event.getData().get("test-key").toString()).isEqualTo("test-value");
-        assertThat(event.getTimestamp()).isEqualTo(Date.from(testUserEvent.getAuditEventDate()));
+        assertThat(event.getTimestamp().truncatedTo(MILLIS)).isEqualTo(testUserEvent.getAuditEventDate().truncatedTo(MILLIS));
     }
 
     @Test
@@ -168,7 +169,7 @@ public class CustomAuditEventRepositoryIntTest {
         assertThat(persistentAuditEvent.getAuditEventType()).isEqualTo(event.getType());
         assertThat(persistentAuditEvent.getData()).containsKey("test-key");
         assertThat(persistentAuditEvent.getData().get("test-key")).isEqualTo("test-value");
-        assertThat(persistentAuditEvent.getAuditEventDate()).isEqualTo(event.getTimestamp().toInstant());
+        assertThat(persistentAuditEvent.getAuditEventDate().truncatedTo(MILLIS)).isEqualTo(event.getTimestamp().truncatedTo(MILLIS));
     }
 
     @Test

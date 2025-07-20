@@ -3,12 +3,12 @@ package com.bravebucks.eve;
 import com.bravebucks.eve.config.ApplicationProperties;
 import com.bravebucks.eve.config.DefaultProfileUtil;
 
+import com.github.cloudyrock.spring.v5.EnableMongock;
 import io.github.jhipster.config.JHipsterConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.actuate.autoconfigure.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,8 +25,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 @ComponentScan
-@EnableAutoConfiguration(exclude = {MetricFilterAutoConfiguration.class, MetricRepositoryAutoConfiguration.class})
+@EnableAutoConfiguration
 @EnableConfigurationProperties({ApplicationProperties.class})
+@EnableMongock
 public class BraveBucksApp {
 
     private static final Logger log = LoggerFactory.getLogger(BraveBucksApp.class);

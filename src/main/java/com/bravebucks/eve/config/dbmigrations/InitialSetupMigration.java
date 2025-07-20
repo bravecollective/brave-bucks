@@ -3,9 +3,9 @@ package com.bravebucks.eve.config.dbmigrations;
 import com.bravebucks.eve.domain.Authority;
 import com.bravebucks.eve.security.AuthoritiesConstants;
 
-import com.github.mongobee.changeset.ChangeLog;
-import com.github.mongobee.changeset.ChangeSet;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import com.github.cloudyrock.mongock.ChangeLog;
+import com.github.cloudyrock.mongock.ChangeSet;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 
 /**
  * Creates the initial database setup
@@ -14,15 +14,15 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class InitialSetupMigration {
 
     @ChangeSet(order = "01", author = "initiator", id = "01-addAuthorities")
-    public void addAuthorities(MongoTemplate mongoTemplate) {
+    public void addAuthorities(MongockTemplate mongockTemplate) {
         Authority adminAuthority = new Authority();
         adminAuthority.setName(AuthoritiesConstants.ADMIN);
         Authority userAuthority = new Authority();
         userAuthority.setName(AuthoritiesConstants.USER);
         Authority managerAuthority = new Authority();
         managerAuthority.setName(AuthoritiesConstants.MANAGER);
-        mongoTemplate.save(adminAuthority);
-        mongoTemplate.save(userAuthority);
-        mongoTemplate.save(managerAuthority);
+        mongockTemplate.save(adminAuthority);
+        mongockTemplate.save(userAuthority);
+        mongockTemplate.save(managerAuthority);
     }
 }

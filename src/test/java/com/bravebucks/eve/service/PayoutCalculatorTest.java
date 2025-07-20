@@ -15,8 +15,8 @@ import com.bravebucks.eve.domain.Killmail;
 import com.bravebucks.eve.repository.KillmailRepository;
 import com.bravebucks.eve.repository.TransactionRepository;
 
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -45,7 +45,7 @@ public class PayoutCalculatorTest {
         pendingKillmail.setPoints(1L);
         pendingKillmail.setAttackerIds(Collections.singletonList(user.getCharacterId().intValue()));
         when(killmailRepo.findPending()).thenReturn(Collections.singletonList(pendingKillmail));
-        when(transactionRepo.save(anyList())).thenReturn(null);
+        when(transactionRepo.saveAll(anyList())).thenReturn(null);
         when(killmailRepo.save(any(Killmail.class))).thenReturn(null);
         LocalDate now = LocalDate.now();
         final Donation donation = new Donation();
@@ -55,8 +55,8 @@ public class PayoutCalculatorTest {
 
         sut.calculatePayouts();
 
-        verify(killmailRepo).save(anyList());
-        verify(transactionRepo).save(anyList());
+        verify(killmailRepo).saveAll(anyList());
+        verify(transactionRepo).saveAll(anyList());
     }
 
     @Test
