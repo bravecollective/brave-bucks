@@ -62,7 +62,6 @@ docker exec -it docker_brave-bucks-java_run_f12850ef5370 /bin/bash
 Build frontend:
 ```shell
 ./mvnw install -Dmaven.test.skip=true
-ln -s /opt/brave-bucks/node/yarn/dist/bin/yarn /usr/local/bin/yarn
 yarn install
 yarn build
 ```
