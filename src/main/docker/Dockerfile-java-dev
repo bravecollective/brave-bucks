@@ -1,10 +1,11 @@
-FROM openjdk:8-jdk-buster
+FROM ibm-semeru-runtimes:open-8-jdk-noble
 
-RUN sed -i 's/deb.debian.org\/debian-security/archive.debian.org\/debian-archive\/debian-security/g' /etc/apt/sources.list
-RUN sed -i 's/deb.debian.org\/debian/archive.debian.org\/debian-archive\/debian/g' /etc/apt/sources.list
+SHELL ["/bin/bash", "-ec"]
 
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
-  apt-get update && \
-  apt-get install -y nodejs=8.17.0-1nodesource1
+RUN apt update && apt-get install xz-utils -y && apt-get install bzip2 -y
+
+RUN curl -LO https://nodejs.org/dist/v8.17.0/node-v8.17.0-linux-x64.tar.xz && \
+  tar -xvf node-v8.17.0-linux-x64.tar.xz && \
+  cp -r node-v8.17.0-linux-x64/{bin,include,lib,share} /usr/
 
 RUN npm install --global yarn
