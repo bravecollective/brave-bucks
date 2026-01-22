@@ -46,7 +46,7 @@ Run Docker development environment:
 ```shell
 cd src/main/docker
 ln -s dev.yml docker-compose.yml
-docker-compose up
+docker compose up
 ```
 
 Import DB dump - replace IP with your host IP, if necessary:
@@ -57,10 +57,10 @@ mongorestore --uri mongodb://admin:password@172.17.0.1:27017/brave-bucks?authSou
 Start and enter Docker Java container:
 ```shell
 cd src/main/docker
-docker-compose run --service-ports brave-bucks-java /bin/bash
+docker compose run --service-ports brave-bucks-java /bin/bash
 
 # second console (find name with "docker ps")
-docker exec -it docker_brave-bucks-java_run_f12850ef5370 /bin/bash
+docker exec -it docker-brave-bucks-java-run-f12850ef5370 /bin/bash
 ```
 
 Build frontend:
