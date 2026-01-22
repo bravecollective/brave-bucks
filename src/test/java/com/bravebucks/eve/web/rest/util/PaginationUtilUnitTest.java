@@ -1,13 +1,13 @@
 package com.bravebucks.eve.web.rest.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +24,7 @@ public class PaginationUtilUnitTest {
     public void generatePaginationHttpHeadersTest() {
         String baseUrl = "/api/_search/example";
         List<String> content = new ArrayList<>();
-        Page<String> page = new PageImpl<>(content,new PageRequest(6, 50),400L);
+        Page<String> page = new PageImpl<>(content, PageRequest.of(6, 50),400L);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, baseUrl);
         List<String> strHeaders = headers.get(HttpHeaders.LINK);
         assertNotNull(strHeaders);

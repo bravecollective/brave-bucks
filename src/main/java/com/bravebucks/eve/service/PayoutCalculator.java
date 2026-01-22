@@ -125,9 +125,9 @@ public class PayoutCalculator {
         transactions.addAll(getRattingTransactions(rattingUsers, pendingRattingEntries));
         pendingRattingEntries.forEach(e -> e.setProcessed(true));
 
-        rattingEntryRepository.save(pendingRattingEntries);
-        killmailRepository.save(pendingKillmails);
-        transactionRepository.save(transactions);
+        rattingEntryRepository.saveAll(pendingRattingEntries);
+        killmailRepository.saveAll(pendingKillmails);
+        transactionRepository.saveAll(transactions);
     }
 
     private List<Transaction> getRattingTransactions(final List<User> rattingUsers,

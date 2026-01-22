@@ -142,7 +142,7 @@ public class SolarSystemResource {
     @GetMapping("/solar-systems/{id}")
     public ResponseEntity<SolarSystem> getSolarSystem(@PathVariable String id) {
         log.debug("REST request to get SolarSystem : {}", id);
-        SolarSystem solarSystem = solarSystemRepository.findOne(id);
+        SolarSystem solarSystem = solarSystemRepository.findById(id).orElse(null);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(solarSystem));
     }
     /**
@@ -155,7 +155,7 @@ public class SolarSystemResource {
     @DeleteMapping("/solar-systems/{id}")
     public ResponseEntity<Void> deleteSolarSystem(@PathVariable String id) {
         log.debug("REST request to delete SolarSystem : {}", id);
-        solarSystemRepository.delete(id);
+        solarSystemRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id)).build();
     }
 }

@@ -8,9 +8,9 @@ import com.bravebucks.eve.web.rest.errors.ExceptionTranslator;
 import com.bravebucks.eve.repository.PayoutRepository;
 import com.bravebucks.eve.repository.TransactionRepository;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +18,7 @@ import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -38,7 +38,7 @@ import com.bravebucks.eve.domain.enumeration.PayoutStatus;
  *
  * @see PayoutResource
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = BraveBucksApp.class)
 @ContextConfiguration(initializers = EnvironmentTestConfiguration.class)
 public class PayoutResourceIntTest {
@@ -83,7 +83,7 @@ public class PayoutResourceIntTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Before
+    @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
         final PayoutResource payoutResource = new PayoutResource(payoutRepository, transactionRepository,
@@ -111,7 +111,7 @@ public class PayoutResourceIntTest {
         return payout;
     }
 
-    @Before
+    @BeforeEach
     public void initTest() {
         payoutRepository.deleteAll();
         payout = createEntity();
@@ -163,7 +163,7 @@ public class PayoutResourceIntTest {
         // Get all the payoutList
         restPayoutMockMvc.perform(get("/api/payouts?sort=id,desc"))
                          .andExpect(status().isOk())
-                         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                          .andExpect(jsonPath("$.[*].id").value(hasItem(payout.getId())))
                          .andExpect(jsonPath("$.[*].user").value(hasItem(DEFAULT_USER.toString())))
                          .andExpect(jsonPath("$.[*].amount").value(hasItem(DEFAULT_AMOUNT.doubleValue())))
@@ -182,7 +182,7 @@ public class PayoutResourceIntTest {
         // Get the payout
         restPayoutMockMvc.perform(get("/api/payouts/{id}", payout.getId()))
                          .andExpect(status().isOk())
-                         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                         .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                          .andExpect(jsonPath("$.id").value(payout.getId()))
                          .andExpect(jsonPath("$.user").value(DEFAULT_USER.toString()))
                          .andExpect(jsonPath("$.amount").value(DEFAULT_AMOUNT.doubleValue()))
@@ -206,7 +206,7 @@ public class PayoutResourceIntTest {
         int databaseSizeBeforeUpdate = payoutRepository.findAll().size();
 
         // Update the payout
-        Payout updatedPayout = payoutRepository.findOne(payout.getId());
+        Payout updatedPayout = payoutRepository.findById(payout.getId()).orElse(null);
         updatedPayout
             .user(UPDATED_USER)
             .amount(UPDATED_AMOUNT)
@@ -236,7 +236,7 @@ public class PayoutResourceIntTest {
         int databaseSizeBeforeUpdate = payoutRepository.findAll().size();
 
         // Update the payout
-        Payout updatedPayout = payoutRepository.findOne(aPayout.getId());
+        Payout updatedPayout = payoutRepository.findById(aPayout.getId()).orElse(null);
         updatedPayout.status(PayoutStatus.CANCELLED);
 
         restPayoutMockMvc.perform(put("/api/payouts")

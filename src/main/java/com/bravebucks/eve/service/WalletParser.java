@@ -127,7 +127,7 @@ public class WalletParser {
                         characterRattingEntries.add(rattingEntry);
                     }
                 }
-                rattingEntryRepository.save(characterRattingEntries);
+                rattingEntryRepository.saveAll(characterRattingEntries);
             } catch (final HttpServerErrorException | HttpClientErrorException exception) {
                 log.info("No new transactions for {} (TQ status is {}): {}", characterId, exception.getStatusCode(),
                          exception.getMessage());
