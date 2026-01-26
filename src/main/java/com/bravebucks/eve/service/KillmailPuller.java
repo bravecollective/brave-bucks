@@ -56,8 +56,12 @@ public class KillmailPuller {
     public void cron() {
         final List<KillmailPackage> packages = new ArrayList<>();
         while (true) {
-            RedisQResponse response = restTemplate.getForObject("https://zkillredisq.stream/listen.php?queueID=bravebuckaroos&ttw=1",
+            RedisQResponse response = restTemplate.getForObject("https://zkillredisq.stream/listen.php?queueID=bravebuckaroos&ttw=2",
                 RedisQResponse.class, new HashMap<>());
+
+            if (response.getKillmailPackage() == null) {
+                break;
+            }
 
             response.getKillmailPackage().setKillmail(
                 killmailFetcher.fetchKillmail(
@@ -66,13 +70,14 @@ public class KillmailPuller {
                 )
             );
 
-            if (response.getKillmailPackage() == null || packages.size() >= 100) {
-                break;
-            } else {
-                log.info("Received a new killmail: {}", response.getKillmailPackage().getKillmail().getKillmailId());
-            }
+            log.info("Received a new killmail: {}", response.getKillmailPackage().getKillmail().getKillmailId());
 
             packages.add(response.getKillmailPackage());
+
+            if (packages.size() >= 100) {
+                break;
+            }
+
         }
 
         log.info("Collected a total of {} killmail packages.", packages.size());
