@@ -4,11 +4,19 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KillmailPackage {
+    private long killID;
     private Killmail killmail;
     private ZkbInfo zkb;
-
     public Killmail getKillmail() {
         return killmail;
+    }
+
+    public long getKillID() {
+        return killID;
+    }
+
+    public void setKillID(long killID) {
+        this.killID = killID;
     }
 
     public void setKillmail(final Killmail killmail) {
