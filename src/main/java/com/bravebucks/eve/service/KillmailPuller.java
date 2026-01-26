@@ -33,19 +33,22 @@ public class KillmailPuller {
     private final KillmailParser killmailParser;
     private final RestTemplate restTemplate;
     private final AdmService admService;
+    private final KillmailFetcher killmailFetcher;
 
     public KillmailPuller(final KillmailRepository killmailRepository,
                           final UserRepository userRepository,
                           final SolarSystemRepository solarSystemRepository,
                           final KillmailParser killmailParser,
                           final RestTemplate restTemplate,
-                          final AdmService admService) {
+                          final AdmService admService,
+                          final KillmailFetcher killmailFetcher) {
         this.killmailRepository = killmailRepository;
         this.userRepository = userRepository;
         this.solarSystemRepository = solarSystemRepository;
         this.killmailParser = killmailParser;
         this.restTemplate = restTemplate;
         this.admService = admService;
+        this.killmailFetcher = killmailFetcher;
     }
 
     @Async
@@ -55,6 +58,13 @@ public class KillmailPuller {
         while (true) {
             RedisQResponse response = restTemplate.getForObject("https://zkillredisq.stream/listen.php?queueID=bravebuckaroos&ttw=1",
                 RedisQResponse.class, new HashMap<>());
+
+            response.getKillmailPackage().setKillmail(
+                killmailFetcher.fetchKillmail(
+                    response.getKillmailPackage().getKillID(),
+                    response.getKillmailPackage().getZkb().getHash()
+                )
+            );
 
             if (response.getKillmailPackage() == null || packages.size() >= 100) {
                 break;

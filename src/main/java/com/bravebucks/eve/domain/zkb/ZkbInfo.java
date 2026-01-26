@@ -7,6 +7,7 @@ public class ZkbInfo {
     private boolean npc;
     private int points;
     private double totalValue;
+    private String hash;
 
     public boolean isNpc() {
         return npc;
@@ -30,5 +31,13 @@ public class ZkbInfo {
 
     public void setTotalValue(final double totalValue) {
         this.totalValue = totalValue;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 }
