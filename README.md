@@ -2,6 +2,12 @@
 
 ### Changelog
 
+#### 2.8.2
+
+- Killmails are now fetched from ESI after ID and Hash are received from RedisQ.
+- RedisQ TTW increased to 2 seconds.
+- Fixed a bug that resulted in every 100th killmail being missed.
+
 #### 2.8.1
 
 Fix RedisQ URL
