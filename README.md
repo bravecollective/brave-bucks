@@ -2,6 +2,12 @@
 
 ### Changelog
 
+#### 2.9.0
+
+- **Breaking Change**: Added REDISQ_URL environment variable.
+- RedisQ cron now only fetches 50 killmails at a time to prevent conflicting processes.
+- Fixed an external image reference.
+
 #### 2.8.2
 
 - Killmails are now fetched from ESI after ID and Hash are received from RedisQ.
@@ -93,6 +99,7 @@ export WALLET_CLIENT_ID=***
 export WALLET_CLIENT_SECRET=***
 export OAUTH_TOKEN_URL='https://login.eveonline.com/v2/oauth/token'
 export ESI_DOMAIN='https://esi.evetech.net'
+export REDISQ_URL='https://zkillredisq.stream/listen.php?queueID=BraveBucksQueue&ttw=1'
 export MONGO_URI=mongodb://admin:password@172.17.0.1:27017/brave-bucks?authSource=admin
 export MONGO_DB=brave-bucks
 export JWT_SECRET=my-secret-token-to-change-in-production
@@ -129,6 +136,7 @@ CLIENT_SECRET=*** \
 SSO_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=http%3A%2F%2Fbucks.bravecollective.com%2Fapi%2Fcallback&client_id=***&scope=&state=uniquestate123' \
 OAUTH_TOKEN_URL='https://login.eveonline.com/v2/oauth/token' \
 ESI_DOMAIN='https://esi.evetech.net' \
+REDISQ_URL='https://zkillredisq.stream/listen.php?queueID=BraveBucksQueue&ttw=1' \
 MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority' \
 MONGO_DB=bucks \
 JWT_SECRET=my-secret-token-to-change-in-production \
@@ -150,6 +158,7 @@ docker run \
   --env SSO_URL='https://login.eveonline.com/v2/oauth/authorize/?response_type=code&redirect_uri=https%3A%2F%2Fbucks.bravecollective.com%2Fapi%2Fcallback&client_id=***&scope=&state=uniquestate123' \
   --env OAUTH_TOKEN_URL='https://login.eveonline.com/v2/oauth/token' \
   --env ESI_DOMAIN='https://esi.evetech.net' \
+  --env REDISQ_URL='https://zkillredisq.stream/listen.php?queueID=BraveBucksQueue&ttw=1' \
   --env MONGO_URI='mongodb://user:pass@cluster.mongodb.net:27017/bucks?ssl=true&replicaSet=atlas-xyz-shard&authSource=admin&retryWrites=true&w=majority' \
   --env MONGO_DB=bucks \
   --env JWT_SECRET=my-secret-token-to-change-in-production \

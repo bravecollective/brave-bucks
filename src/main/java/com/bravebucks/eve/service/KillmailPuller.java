@@ -15,6 +15,7 @@ import com.bravebucks.eve.repository.UserRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class KillmailPuller {
+
+    @Value("${REDISQ_URL}")
+    private String RedisQURL;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private List<Integer> systems;
@@ -56,7 +60,7 @@ public class KillmailPuller {
     public void cron() {
         final List<KillmailPackage> packages = new ArrayList<>();
         while (true) {
-            RedisQResponse response = restTemplate.getForObject("https://zkillredisq.stream/listen.php?queueID=bravebuckaroos&ttw=2",
+            RedisQResponse response = restTemplate.getForObject(RedisQURL,
                 RedisQResponse.class, new HashMap<>());
 
             if (response.getKillmailPackage() == null) {
@@ -74,7 +78,7 @@ public class KillmailPuller {
 
             packages.add(response.getKillmailPackage());
 
-            if (packages.size() >= 100) {
+            if (packages.size() >= 50) {
                 break;
             }
 
