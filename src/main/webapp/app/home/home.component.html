@@ -2,7 +2,7 @@
     <div class="col-md-3 hidden-xs">
         <div *ngIf="!isAuthenticated()">
             <img class="img-fluid img-rounded d-none d-md-block"
-                 src="https://crossingzebras.com/wp-content/uploads/2015/04/catch_Join.png" />
+                 src="../../content/images/catch_Join.png"  alt="Propaganda banner"/>
         </div>
         <div *ngIf="isAuthenticated()">
             <jhi-manager-overview *jhiHasAnyAuthority="'ROLE_MANAGER'"></jhi-manager-overview>
