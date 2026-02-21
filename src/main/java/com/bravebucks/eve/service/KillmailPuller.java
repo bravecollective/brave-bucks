@@ -1,14 +1,15 @@
 package com.bravebucks.eve.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
+
 import static java.util.stream.Collectors.toList;
 
 import com.bravebucks.eve.domain.Killmail;
 import com.bravebucks.eve.domain.zkb.KillmailPackage;
-import com.bravebucks.eve.domain.zkb.RedisQResponse;
+import com.bravebucks.eve.domain.zkb.R2Z2Sequence;
 import com.bravebucks.eve.repository.KillmailRepository;
 import com.bravebucks.eve.repository.SolarSystemRepository;
 import com.bravebucks.eve.repository.UserRepository;
@@ -20,12 +21,13 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 public class KillmailPuller {
 
-    @Value("${REDISQ_URL}")
-    private String RedisQURL;
+    @Value("${ZKILL_R2Z2_URL}")
+    private String zkillR2Z2URL;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private List<Integer> systems;
@@ -38,6 +40,8 @@ public class KillmailPuller {
     private final RestTemplate restTemplate;
     private final AdmService admService;
     private final KillmailFetcher killmailFetcher;
+
+    private final AtomicLong lastSequence = new AtomicLong(0L);
 
     public KillmailPuller(final KillmailRepository killmailRepository,
                           final UserRepository userRepository,
@@ -59,26 +63,41 @@ public class KillmailPuller {
     @Scheduled(cron = "0 * * * * *")
     public void cron() {
         final List<KillmailPackage> packages = new ArrayList<>();
-        while (true) {
-            RedisQResponse response = restTemplate.getForObject(RedisQURL,
-                RedisQResponse.class, new HashMap<>());
 
-            if (response.getKillmailPackage() == null) {
-                break;
-            }
+        long sequence;
+        if (lastSequence.get() == 0) {
+            sequence = getZkillSequence();
+        } else {
+            sequence = lastSequence.get();
+        }
 
-            response.getKillmailPackage().setKillmail(
-                killmailFetcher.fetchKillmail(
-                    response.getKillmailPackage().getKillID(),
-                    response.getKillmailPackage().getZkb().getHash()
-                )
-            );
+        while (true){
+            try {
+                KillmailPackage response = getZkillPackage(sequence);
 
-            log.info("Received a new killmail: {}", response.getKillmailPackage().getKillmail().getKillmailId());
+                // In case Squizz removes esi data from killmails again
+                if (response.getKillmail() == null) {
+                    response.setKillmail(
+                        killmailFetcher.fetchKillmail(
+                            response.getKillmail_id(),
+                            response.getZkb().getHash()
+                        )
+                    );
+                }
 
-            packages.add(response.getKillmailPackage());
+                log.info("Received a new killmail: {}", response.getKillmail().getKillmailId());
 
-            if (packages.size() >= 50) {
+                packages.add(response);
+
+                Thread.sleep(100); // sleep 100ms to keep poll rate at 10/s, to avoid rate limiting
+                sequence++;
+
+            } catch (HttpClientErrorException e) {
+                if (e.getStatusCode().value() == 404) {
+                    break; //Save the current batch, resume from the same sequence next cron job
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 break;
             }
 
@@ -108,11 +127,25 @@ public class KillmailPuller {
                                                  .collect(toList());
 
         log.info("Saving {} new killmails.", killmails.size());
+
+        // Store last processed sequence_id to avoid duplicate work
+        long lastProcessed = sequence;
+        lastSequence.updateAndGet(s -> Math.max(s, lastProcessed));
+
         if (killmails.isEmpty()) {
             return;
         }
 
         killmailRepository.save(killmails);
+
+    }
+
+    private long getZkillSequence() {
+        return restTemplate.getForObject(zkillR2Z2URL + "sequence.json", R2Z2Sequence.class).getSequence();
+    }
+
+    private KillmailPackage getZkillPackage(final long sequence) {
+        return restTemplate.getForObject(zkillR2Z2URL + sequence + ".json", KillmailPackage.class);
     }
 
     private long getPoints(final long points) {
