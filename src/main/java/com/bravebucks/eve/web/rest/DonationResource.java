@@ -117,7 +117,7 @@ public class DonationResource {
     @GetMapping("/donations/{id}")
     public ResponseEntity<Donation> getDonation(@PathVariable String id) {
         log.debug("REST request to get Donation : {}", id);
-        Donation donation = donationRepository.findOne(id);
+        Donation donation = donationRepository.findById(id).orElse(null);
         return ResponseUtil.wrapOrNotFound(Optional.ofNullable(donation));
     }
 
@@ -130,7 +130,7 @@ public class DonationResource {
     @DeleteMapping("/donations/{id}")
     public ResponseEntity<Void> deleteDonation(@PathVariable String id) {
         log.debug("REST request to delete Donation : {}", id);
-        donationRepository.delete(id);
+        donationRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id)).build();
     }
 }

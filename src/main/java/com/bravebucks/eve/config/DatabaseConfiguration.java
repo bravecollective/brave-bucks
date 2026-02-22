@@ -1,21 +1,17 @@
 package com.bravebucks.eve.config;
 
-import com.github.mongobee.Mongobee;
-import com.mongodb.MongoClient;
 import io.github.jhipster.config.JHipsterConstants;
 import io.github.jhipster.domain.util.JSR310DateConverters.DateToZonedDateTimeConverter;
 import io.github.jhipster.domain.util.JSR310DateConverters.ZonedDateTimeToDateConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
@@ -49,15 +45,11 @@ public class DatabaseConfiguration {
         return new CustomConversions(converters);
     }
 
-    @Bean
-    public Mongobee mongobee(MongoClient mongoClient, MongoTemplate mongoTemplate, MongoProperties mongoProperties) {
-        log.debug("Configuring Mongobee");
-        Mongobee mongobee = new Mongobee(mongoClient);
-        mongobee.setDbName(mongoProperties.getDatabase());
-        mongobee.setMongoTemplate(mongoTemplate);
-        // package to scan for migrations
-        mongobee.setChangeLogsScanPackage("com.bravebucks.eve.config.dbmigrations");
-        mongobee.setEnabled(true);
-        return mongobee;
-    }
+//    @Bean
+//    public MongoClientSettingsBuilderCustomizer mongoClientSettingsBuilderCustomizer() {
+        // This exists to demonstrate how to configure such things
+        //return builder -> builder.readConcern(ReadConcern.LOCAL);
+        //return builder -> builder.writeConcern(WriteConcern.MAJORITY);
+//    }
+
 }

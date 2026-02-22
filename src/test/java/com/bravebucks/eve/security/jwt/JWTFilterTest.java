@@ -3,8 +3,8 @@ package com.bravebucks.eve.security.jwt;
 import com.bravebucks.eve.security.AuthoritiesConstants;
 
 import io.github.jhipster.config.JHipsterProperties;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -25,7 +25,7 @@ public class JWTFilterTest {
 
     private JWTFilter jwtFilter;
 
-    @Before
+    @BeforeEach
     public void setup() {
         JHipsterProperties jHipsterProperties = new JHipsterProperties();
         tokenProvider = new TokenProvider(jHipsterProperties);

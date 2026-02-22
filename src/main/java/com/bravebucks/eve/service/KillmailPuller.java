@@ -112,7 +112,7 @@ public class KillmailPuller {
             return;
         }
 
-        killmailRepository.save(killmails);
+        killmailRepository.saveAll(killmails);
     }
 
     private long getPoints(final long points) {

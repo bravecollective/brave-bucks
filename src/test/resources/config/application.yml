@@ -32,7 +32,7 @@ spring:
         favicon:
             enabled: false
     thymeleaf:
-        mode: XHTML
+        mode: HTML
 
 liquibase:
     contexts: test
@@ -81,6 +81,15 @@ jhipster:
         logs: # Reports Dropwizard metrics in the logs
             enabled: true
             report-frequency: 60 # in seconds
+
+mongock:
+    change-logs-scan-package:
+        - com.bravebucks.eve.config.dbmigrations
+    mongo-db:
+        read-concern: local
+        write-concern:
+            journal: false
+#            w: majority
 
 # ===================================================================
 # Application specific properties

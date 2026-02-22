@@ -14,9 +14,9 @@ import com.bravebucks.eve.security.AuthoritiesConstants;
 import com.bravebucks.eve.service.dto.UserDTO;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserMapperTest {
 

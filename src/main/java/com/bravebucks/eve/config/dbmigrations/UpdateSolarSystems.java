@@ -1,10 +1,10 @@
 package com.bravebucks.eve.config.dbmigrations;
 
 import com.bravebucks.eve.domain.SolarSystem;
-import com.github.mongobee.changeset.ChangeLog;
-import com.github.mongobee.changeset.ChangeSet;
+import com.github.cloudyrock.mongock.ChangeLog;
+import com.github.cloudyrock.mongock.ChangeSet;
 
-import org.springframework.data.mongodb.core.MongoTemplate;
+import com.github.cloudyrock.mongock.driver.mongodb.springdata.v3.decorator.impl.MongockTemplate;
 
 /**
  * Creates the initial database setup
@@ -13,11 +13,11 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class UpdateSolarSystems {
 
     @ChangeSet(order = "02", author = "rihan", id = "02-updateSolarSystems")
-    public void addAuthorities(MongoTemplate mongoTemplate) {
-        mongoTemplate.findAll(SolarSystem.class).forEach(s -> {
+    public void addAuthorities(MongockTemplate mongockTemplate) {
+        mongockTemplate.findAll(SolarSystem.class).forEach(s -> {
             s.setTrackPvp(true);
             s.setTrackRatting(false);
-            mongoTemplate.save(s);
+            mongockTemplate.save(s);
         });
     }
 }
