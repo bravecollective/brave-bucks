@@ -2,6 +2,7 @@ package com.bravebucks.eve.domain.zkb;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Deprecated
 public class RedisQResponse {
 
     // https://redisq.zkillboard.com/listen.php?ttw=20
