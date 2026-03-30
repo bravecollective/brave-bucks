@@ -2,8 +2,9 @@
 
 ### Changelog
 
-#### next version:
-- **Breaking Change**: Migrated from RedisQ to R2Z2, removed REDISQ_URL environment variable and replaced it with ZKILL_R2Z2_URL.
+#### 2.10.0
+- **Breaking Change**: Migrated from RedisQ to R2Z2
+- **Breaking Change**: Removed REDISQ_URL environment variable and replaced it with ZKILL_R2Z2_URL.
 
 #### 2.9.0
 
