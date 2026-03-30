@@ -16,6 +16,7 @@ import com.bravebucks.eve.repository.UserRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -37,7 +38,7 @@ public class KillmailPuller {
     private final UserRepository userRepository;
     private final SolarSystemRepository solarSystemRepository;
     private final KillmailParser killmailParser;
-    private final RestTemplate restTemplate;
+    private final RestTemplate r2z2RestTemplate;
     private final AdmService admService;
     private final KillmailFetcher killmailFetcher;
 
@@ -47,14 +48,14 @@ public class KillmailPuller {
                           final UserRepository userRepository,
                           final SolarSystemRepository solarSystemRepository,
                           final KillmailParser killmailParser,
-                          final RestTemplate restTemplate,
+                          @Qualifier("r2z2RestTemplate") final RestTemplate r2z2RestTemplate,
                           final AdmService admService,
                           final KillmailFetcher killmailFetcher) {
         this.killmailRepository = killmailRepository;
         this.userRepository = userRepository;
         this.solarSystemRepository = solarSystemRepository;
         this.killmailParser = killmailParser;
-        this.restTemplate = restTemplate;
+        this.r2z2RestTemplate = r2z2RestTemplate;
         this.admService = admService;
         this.killmailFetcher = killmailFetcher;
     }
@@ -71,7 +72,8 @@ public class KillmailPuller {
             sequence = lastSequence.get();
         }
 
-        while (true){
+        long sequenceLimit = sequence + 50;
+        while (sequence < sequenceLimit){
             try {
                 KillmailPackage response = getZkillPackage(sequence);
 
@@ -141,11 +143,11 @@ public class KillmailPuller {
     }
 
     private long getZkillSequence() {
-        return restTemplate.getForObject(zkillR2Z2URL + "sequence.json", R2Z2Sequence.class).getSequence();
+        return r2z2RestTemplate.getForObject(zkillR2Z2URL + "sequence.json", R2Z2Sequence.class).getSequence();
     }
 
     private KillmailPackage getZkillPackage(final long sequence) {
-        return restTemplate.getForObject(zkillR2Z2URL + sequence + ".json", KillmailPackage.class);
+        return r2z2RestTemplate.getForObject(zkillR2Z2URL + sequence + ".json", KillmailPackage.class);
     }
 
     private long getPoints(final long points) {

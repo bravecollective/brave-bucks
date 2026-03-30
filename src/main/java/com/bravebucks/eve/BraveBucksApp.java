@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -60,6 +61,7 @@ public class BraveBucksApp {
     }
 
     @Bean
+    @Primary
     public RestTemplate restTemplate() {
         final OkHttp3ClientHttpRequestFactory requestFactory = new OkHttp3ClientHttpRequestFactory();
         requestFactory.setReadTimeout(15_000);
@@ -67,6 +69,14 @@ public class BraveBucksApp {
         restTemplate.setInterceptors(Collections.singletonList(new XEsiInterceptor()));
         restTemplate.setErrorHandler(new MyResponseErrorHandler(delayService));
         return restTemplate;
+    }
+
+    // This is a dedicated template for pulling killmails from R2Z2, where 404 is an expected response
+    @Bean
+    public RestTemplate r2z2RestTemplate() {
+        final OkHttp3ClientHttpRequestFactory requestFactory = new OkHttp3ClientHttpRequestFactory();
+        requestFactory.setReadTimeout(15_000);
+        return new RestTemplate(requestFactory);
     }
 
     /**
