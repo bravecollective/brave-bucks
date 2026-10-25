@@ -24,6 +24,10 @@ export class InfoBlockComponent implements OnInit {
             this.configService.getWalletUrl().subscribe((data) => this.walletUrl = data + "-" + account.id);
         });
 
+        this.http.get('/api/characters').subscribe((charNames) => {
+            this.characterNames = charNames.json();
+        });
+
         for (let region of this.regions) {
             this.http.get('/api/solar-systems/region/'+region.toUpperCase()).subscribe((data) => {
                 const systems = data.json();
