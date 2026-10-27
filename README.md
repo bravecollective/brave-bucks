@@ -2,6 +2,9 @@
 
 ### Changelog
 
+#### 2.10.1
+- Re-added display for authed character wallets.
+
 #### 2.10.0
 - **Breaking Change**: Migrated from RedisQ to R2Z2
 - **Breaking Change**: Removed REDISQ_URL environment variable and replaced it with ZKILL_R2Z2_URL.
